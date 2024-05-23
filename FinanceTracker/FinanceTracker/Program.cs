@@ -4,31 +4,31 @@ using FinanceTracker.Models;
 
 Account account = new Account();
 
-string? readResult;
+string? userInput;
 string menuSelection = "";
 
 do
 {
     DisplayMainMenu();
 
-    readResult = Console.ReadLine();
-    if (readResult != null)
+    userInput = Console.ReadLine();
+    if (userInput != null)
     {
-        menuSelection = readResult.ToLower();
+        menuSelection = userInput.ToLower();
     }
 
     switch (menuSelection)
     {
         case "1":
-            ICommand getIncome = new GetIncome();
+            ICommand getIncome = new GetIncomeCommand();
             getIncome.Execute(account);
             break;
         case "2":
-            ICommand getExpence = new GetExpence();
+            ICommand getExpence = new GetExpenceCommand();
             getExpence.Execute(account);
             break;
         case "3":
-            ICommand getBalance = new GetBalance();
+            ICommand getBalance = new GetBalanceCommand();
             getBalance.Execute(account);
             break;
         default:

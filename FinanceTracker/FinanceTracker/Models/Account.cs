@@ -2,30 +2,26 @@
 {
     public class Account
     {
+        public List<Operation> Operations = new();
         public decimal Balance
         {
             get
             {
-                return Incomes - Expences;
+                decimal delta = 0.0m;
+                foreach (var operation in Operations)
+                {
+                    if (operation.IsIncome())
+                    {
+                        delta += operation.Amount;
+                    }
+                    else
+                    {
+                        delta -= operation.Amount;
+                    }
+                }
+
+                return delta;
             }
-        }
-        public decimal Incomes { get; set; }
-        public decimal Expences { get; set; }
-
-        public Account()
-        {
-            Incomes = 0.0m;
-            Expences = 0.0m;
-        }
-
-        public void AddIncome(decimal amount)
-        {
-            Incomes += amount;
-        }
-
-        public void AddExpence(decimal amount)
-        {
-            Expences += amount;
         }
     }
 }
