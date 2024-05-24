@@ -1,31 +1,22 @@
-﻿namespace FinanceTracker.Models
+﻿using FinanceTracker.Enums;
+
+namespace FinanceTracker.Models
 {
     public class Account
     {
-        public decimal Balance
+        public List<Operation> Operations = new();
+        public decimal Balance { get; private set; }
+
+        public void UpdateBalance(Operation operation)
         {
-            get
+            if (operation.Type is OperationType.Income)
             {
-                return Incomes - Expences;
+                Balance += operation.Amount;
             }
-        }
-        public decimal Incomes { get; set; }
-        public decimal Expences { get; set; }
-
-        public Account()
-        {
-            Incomes = 0.0m;
-            Expences = 0.0m;
-        }
-
-        public void AddIncome(decimal amount)
-        {
-            Incomes += amount;
-        }
-
-        public void AddExpence(decimal amount)
-        {
-            Expences += amount;
+            else
+            {
+                Balance -= operation.Amount;
+            }
         }
     }
 }
