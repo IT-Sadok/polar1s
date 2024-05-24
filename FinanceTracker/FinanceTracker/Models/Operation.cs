@@ -4,7 +4,7 @@ namespace FinanceTracker.Models
 {
     public class Operation
     {
-        OperationType Type { get; set; }
+        public OperationType Type { get; set; }
         public Guid ID { get; set; }
         public decimal Amount { get; set; }
         public string Description { get; set; }

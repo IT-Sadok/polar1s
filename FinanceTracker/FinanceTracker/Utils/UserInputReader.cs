@@ -1,30 +1,34 @@
 ﻿using FinanceTracker.Enums;
 
-namespace FinanceTracker
+namespace FinanceTracker.Utils
 {
     public class UserInputReader
     {
         public decimal GetAmount()
         {
-            string? userInput;
             bool validEntry = false;
             decimal amount = 0.0m;
+            string userInput;
+            string displayMessage = "Enter an amount (i.e 3.45):";
 
-            do
+            while (!validEntry)
             {
-                Console.WriteLine("Enter an amount (i.e 3.45):");
+                userInput = GetInput(displayMessage);
+                validEntry = decimal.TryParse(userInput, out amount);
+            }
 
-                userInput = Console.ReadLine();
-                if (userInput != null)
-                {
-                    validEntry = decimal.TryParse(userInput, out amount);
-                }
-            } while (validEntry == false);
-
-            return amount;
+            return Math.Abs(amount);
         }
 
         public string GetDescription()
+        {
+            string displayMessage = "Enter a description:";
+            string description = GetInput(displayMessage);
+
+            return description;
+        }
+
+        private string GetInput(string displayMessage)
         {
             string? userInput;
             bool validEntry = false;
@@ -32,7 +36,7 @@ namespace FinanceTracker
 
             do
             {
-                Console.WriteLine("Enter a description:");
+                Console.WriteLine(displayMessage);
 
                 userInput = Console.ReadLine();
                 if (userInput != null)
@@ -44,5 +48,7 @@ namespace FinanceTracker
 
             return description;
         }
+
+
     }
 }

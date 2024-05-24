@@ -1,26 +1,21 @@
-﻿namespace FinanceTracker.Models
+﻿using FinanceTracker.Enums;
+
+namespace FinanceTracker.Models
 {
     public class Account
     {
         public List<Operation> Operations = new();
-        public decimal Balance
-        {
-            get
-            {
-                decimal delta = 0.0m;
-                foreach (var operation in Operations)
-                {
-                    if (operation.IsIncome())
-                    {
-                        delta += operation.Amount;
-                    }
-                    else
-                    {
-                        delta -= operation.Amount;
-                    }
-                }
+        public decimal Balance { get; private set; }
 
-                return delta;
+        public void UpdateBalance(Operation operation)
+        {
+            if (operation.Type is OperationType.Income)
+            {
+                Balance += operation.Amount;
+            }
+            else
+            {
+                Balance -= operation.Amount;
             }
         }
     }
