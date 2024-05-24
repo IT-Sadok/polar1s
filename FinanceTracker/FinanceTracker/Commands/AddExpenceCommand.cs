@@ -5,18 +5,8 @@ using FinanceTracker.Utils;
 
 namespace FinanceTracker.Commands
 {
-    public class AddExpenceCommand : ICommand
+    public class AddExpenceCommand : Command
     {
-        public void Execute(Account account)
-        {
-            UserInputReader reader = new UserInputReader();
-            decimal amount = reader.GetAmount();
-            string description = reader.GetDescription();
-            Operation operation = new Operation(OperationType.Expence, amount, description);
-            account.Operations.Add(operation);
-            account.UpdateBalance(operation);
-
-            Console.ReadLine();
-        }
+        public AddExpenceCommand() : base(OperationType.Expence) { }
     }
 }

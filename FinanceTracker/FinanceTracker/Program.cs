@@ -20,12 +20,12 @@ do
     switch (menuSelection)
     {
         case "1":
-            ICommand getIncome = new AddIncomeCommand();
-            getIncome.Execute(account);
+            ICommand addIncome = new AddIncomeCommand();
+            addIncome.Execute(account);
             break;
         case "2":
-            ICommand getExpence = new AddExpenceCommand();
-            getExpence.Execute(account);
+            ICommand addExpence = new AddExpenceCommand();
+            addExpence.Execute(account);
             break;
         case "3":
             ICommand getBalance = new GetBalanceCommand();
