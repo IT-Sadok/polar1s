@@ -5,7 +5,7 @@ using FinanceTracker.Utils;
 
 namespace FinanceTracker.Commands
 {
-    public class AddExpenceCommand : Command
+    public class AddExpenceCommand : AddOperationCommandBase
     {
         public AddExpenceCommand() : base(OperationType.Expence) { }
     }

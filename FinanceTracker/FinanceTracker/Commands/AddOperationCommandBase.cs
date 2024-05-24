@@ -5,7 +5,7 @@ using FinanceTracker.Utils;
 
 namespace FinanceTracker.Commands
 {
-    public abstract class Command : ICommand
+    public abstract class AddOperationCommandBase : ICommand
     {
         protected OperationType _type;
         public void Execute(Account account)
@@ -18,7 +18,7 @@ namespace FinanceTracker.Commands
             account.UpdateBalance(operation);
         }
 
-        public Command(OperationType type)
+        public AddOperationCommandBase(OperationType type)
         {
             _type = type;
         }

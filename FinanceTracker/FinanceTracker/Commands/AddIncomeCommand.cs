@@ -5,9 +5,8 @@ using FinanceTracker.Utils;
 
 namespace FinanceTracker.Commands
 {
-    public class AddIncomeCommand : Command
+    public class AddIncomeCommand : AddOperationCommandBase
     {
-
         public AddIncomeCommand() : base(OperationType.Income) { }
     }
 }
