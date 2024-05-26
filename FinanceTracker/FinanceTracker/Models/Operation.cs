@@ -1,22 +1,32 @@
 ﻿using FinanceTracker.Enums;
+using System.Text.Json.Serialization;
 
 namespace FinanceTracker.Models
 {
     public class Operation
     {
-        public OperationType Type { get; set; }
+        [JsonPropertyName("id")]
         public Guid ID { get; set; }
-        public decimal Amount { get; set; }
-        public string Description { get; set; }
-        public DateTime DateTime { get; set; }
 
-        public Operation(OperationType operationType, decimal amount, string description)
+        [JsonPropertyName("type")]
+        public OperationType Type { get; set; }
+
+        [JsonPropertyName("amount")]
+        public decimal Amount { get; set; }
+
+        [JsonPropertyName("description")]
+        public string Description { get; set; }
+
+        [JsonPropertyName("date")]
+        public string Date { get; set; }
+
+        public Operation(Guid id, OperationType type, decimal amount, string description, string date)
         {
-            ID = Guid.NewGuid();
-            Type = operationType;
+            ID = id;
+            Type = type;
             Amount = amount;
             Description = description;
-            DateTime = DateTime.Now;
+            Date = date;
         }
 
         public bool IsIncome()

@@ -11,9 +11,11 @@ namespace FinanceTracker.Commands
         public void Execute(Account account)
         {
             UserInputReader reader = new UserInputReader();
+            Guid id = Guid.NewGuid();
             decimal amount = reader.GetAmount();
             string description = reader.GetDescription();
-            Operation operation = new Operation(_type, amount, description);
+            string date = DateTime.Now.ToString("dd/MM/yyyy HH:mm");
+            Operation operation = new Operation(id, _type, amount, description, date);
             account.Operations.Add(operation);
             account.UpdateBalance(operation);
         }
