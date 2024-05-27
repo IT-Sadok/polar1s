@@ -9,6 +9,7 @@ namespace FinanceTracker.Utils
         {
             var options = new JsonSerializerOptions
             {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
                 WriteIndented = true
             };
 
@@ -23,9 +24,14 @@ namespace FinanceTracker.Utils
                 return new List<Operation>();
             }
 
+            var options = new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            };
+
             string json = File.ReadAllText(filePath);
 
-            return JsonSerializer.Deserialize<List<Operation>>(json) ?? new List<Operation>();
+            return JsonSerializer.Deserialize<List<Operation>>(json, options) ?? new List<Operation>();
         }
     }
 }

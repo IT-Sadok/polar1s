@@ -7,6 +7,7 @@ namespace FinanceTracker.Commands
 {
     public abstract class AddOperationCommandBase : ICommand
     {
+        const string _format = "dd/MM/yyyy HH:mm";
         protected OperationType _type;
         public void Execute(Account account)
         {
@@ -14,7 +15,7 @@ namespace FinanceTracker.Commands
             Guid id = Guid.NewGuid();
             decimal amount = reader.GetAmount();
             string description = reader.GetDescription();
-            string date = DateTime.Now.ToString("dd/MM/yyyy HH:mm");
+            string date = DateTime.UtcNow.ToString(_format);
             Operation operation = new Operation(id, _type, amount, description, date);
             account.Operations.Add(operation);
             account.UpdateBalance(operation);
