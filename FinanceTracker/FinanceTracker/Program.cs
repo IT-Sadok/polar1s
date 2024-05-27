@@ -1,11 +1,15 @@
 ﻿using FinanceTracker.Commands;
 using FinanceTracker.Interfaces;
 using FinanceTracker.Models;
+using FinanceTracker.Utils;
 
-Account account = new Account();
+const string FILEPATH = "db.json";
 
 string? userInput;
 string menuSelection = "";
+
+List<Operation> operations = JsonFileManager.ReadFromJson(FILEPATH);
+Account account = new Account(operations);
 
 do
 {
@@ -36,6 +40,8 @@ do
     }
 
 } while (menuSelection != "exit");
+
+JsonFileManager.WriteToJson(account.Operations, FILEPATH);
 
 void DisplayMainMenu()
 {
