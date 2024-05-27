@@ -7,6 +7,7 @@ namespace FinanceTracker.Commands
 {
     public abstract class AddOperationCommandBase : ICommand
     {
+        private const string _format = "dd/MM/yyyy HH:mm";
         protected OperationType _type;
         public void Execute(Account account)
         {
@@ -27,7 +28,7 @@ namespace FinanceTracker.Commands
             CategoryBase category = reader.GetCategory(_type); // идея в том, чтобы здесь получить нужную категорию в райнтайме
             decimal amount = reader.GetAmount();
             string description = reader.GetDescription();
-            string date = DateTime.Now.ToString("dd/MM/yyyy HH:mm");
+            string date = DateTime.Now.ToString(_format);
             Operation operation = new Operation(id, _type, category, amount, description, date);
             account.Operations.Add(operation);
             account.UpdateBalance(operation);

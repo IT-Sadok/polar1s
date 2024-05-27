@@ -4,6 +4,6 @@ namespace FinanceTracker.Models
 {
     public class CategoryIncome : CategoryBase
     {
-        public CategoryIncomeEnum category {  get; set; }
+        public CategoryIncomeEnum Category {  get; set; }
     }
 }

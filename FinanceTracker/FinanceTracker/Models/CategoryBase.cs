@@ -1,6 +1,8 @@
-﻿namespace FinanceTracker.Models
+﻿using FinanceTracker.Interfaces;
+
+namespace FinanceTracker.Models
 {
-    public class CategoryBase
+    public class CategoryBase : ICategory
     {
     }
 }
