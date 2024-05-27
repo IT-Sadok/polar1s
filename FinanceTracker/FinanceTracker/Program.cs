@@ -21,19 +21,20 @@ do
         menuSelection = userInput.ToLower();
     }
 
+    ICommand? command = null;
     switch (menuSelection)
     {
         case "1":
-            ICommand addIncome = new AddIncomeCommand();
-            addIncome.Execute(account);
+            command = new AddIncomeCommand();
+            command.Execute(account);
             break;
         case "2":
-            ICommand addExpence = new AddExpenceCommand();
-            addExpence.Execute(account);
+            command = new AddExpenceCommand();
+            command.Execute(account);
             break;
         case "3":
-            ICommand getBalance = new GetBalanceCommand();
-            getBalance.Execute(account);
+            command = new GetBalanceCommand();
+            command.Execute(account);
             break;
         default:
             break;
@@ -41,7 +42,7 @@ do
 
 } while (menuSelection != "exit");
 
-JsonFileManager.WriteToJson(account.Operations, FILEPATH);
+JsonFileManager.WriteToJson(account, FILEPATH);
 
 void DisplayMainMenu()
 {

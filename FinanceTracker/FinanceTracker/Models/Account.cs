@@ -4,7 +4,7 @@ namespace FinanceTracker.Models
 {
     public class Account
     {
-        public List<Operation> Operations;
+        private List<Operation> Operations;
         public decimal Balance { get; private set; }
 
         public Account(List<Operation> operations)
@@ -34,6 +34,10 @@ namespace FinanceTracker.Models
             {
                 Balance -= operation.Amount;
             }
+
+            Operations.Add(operation);
         }
+
+        public List<Operation> GetOperations() { return Operations; }
     }
 }

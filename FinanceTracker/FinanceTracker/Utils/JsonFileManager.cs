@@ -5,7 +5,7 @@ namespace FinanceTracker.Utils
 {
     public class JsonFileManager
     {
-        public static void WriteToJson(List<Operation> operations, string filePath)
+        public static void WriteToJson(Account account, string filePath)
         {
             var options = new JsonSerializerOptions
             {
@@ -13,7 +13,7 @@ namespace FinanceTracker.Utils
                 WriteIndented = true
             };
 
-            string json = JsonSerializer.Serialize(operations, options);
+            string json = JsonSerializer.Serialize(account.GetOperations(), options);
             File.WriteAllText(filePath, json);
         }
 

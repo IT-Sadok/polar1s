@@ -1,5 +1,4 @@
 ﻿using FinanceTracker.Enums;
-using System.Text.Json.Serialization;
 
 namespace FinanceTracker.Models
 {
@@ -13,9 +12,9 @@ namespace FinanceTracker.Models
 
         public string Description { get; set; }
 
-        public string Date { get; set; }
+        public DateTime Date { get; set; }
 
-        public Operation(Guid id, OperationType type, decimal amount, string description, string date)
+        public Operation(Guid id, OperationType type, decimal amount, string description, DateTime date)
         {
             Id = id;
             Type = type;
