@@ -12,10 +12,11 @@ namespace FinanceTracker.Commands
         {
             UserInputReader reader = new UserInputReader();
             Guid id = Guid.NewGuid();
+            int categoryId = reader.GetCategory(_type);
             decimal amount = reader.GetAmount();
             string description = reader.GetDescription();
             DateTime date = DateTime.UtcNow;
-            Operation operation = new Operation(id, _type, amount, description, date);
+            Operation operation = new Operation(id, _type, categoryId, amount, description, date);
             account.UpdateBalance(operation);
         }
 

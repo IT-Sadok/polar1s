@@ -1,4 +1,5 @@
-﻿using FinanceTracker.Models;
+﻿using FinanceTracker.Enums;
+using FinanceTracker.Models;
 using System.Text.Json;
 
 namespace FinanceTracker.Utils
@@ -29,9 +30,21 @@ namespace FinanceTracker.Utils
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
             };
 
-            string json = File.ReadAllText(filePath);
+            string jsonDb = File.ReadAllText(filePath);
 
-            return JsonSerializer.Deserialize<List<Operation>>(json, options) ?? new List<Operation>();
+            return JsonSerializer.Deserialize<List<Operation>>(jsonDb, options) ?? new List<Operation>();
+        }
+
+        public static List<Category> ReadCategoriesFromJson(string filepath)
+        {
+            var options = new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            };
+
+            string jsonCategories = File.ReadAllText(filepath);
+
+            return JsonSerializer.Deserialize<List<Category>>(jsonCategories, options) ?? new List<Category>();
         }
     }
 }
