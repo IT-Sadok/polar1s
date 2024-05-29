@@ -25,10 +25,5 @@ namespace FinanceTracker.Models
             Description = description;
             Date = date;
         }
-
-        public bool IsIncome()
-        {
-            return (Type == OperationType.Income) ? true: false;
-        }
     }
 }
