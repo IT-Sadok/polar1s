@@ -11,12 +11,10 @@ namespace FinanceTracker.Utils
             List<Category> categories = JsonFileManager.ReadCategoriesFromJson(FILEPATH);
             categories = categories.Where(category => category.Type == type).ToList();
 
-            bool validEntry = false;
-            int categoryId = 0;
             string userInput;
             const string displayMessage = "Enter a category from listed below:";
 
-            while (!validEntry)
+            while (true)
             {
                 userInput = GetCategoryChoice(displayMessage, categories).ToLower();
 
@@ -24,12 +22,10 @@ namespace FinanceTracker.Utils
 
                 if (matchingCategory != null)
                 {
-                    categoryId = matchingCategory.Id;
-                    validEntry = true;
+                    return matchingCategory.Id;
                 }
             }
 
-            return categoryId;
         }
         public decimal GetAmount()
         {
