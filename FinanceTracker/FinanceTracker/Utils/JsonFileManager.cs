@@ -14,7 +14,7 @@ namespace FinanceTracker.Utils
                 WriteIndented = true
             };
 
-            string json = JsonSerializer.Serialize(account.GetOperations(), options);
+            string json = JsonSerializer.Serialize(account.Operations, options);
             File.WriteAllText(filePath, json);
         }
 

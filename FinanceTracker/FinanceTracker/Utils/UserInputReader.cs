@@ -5,9 +5,9 @@ namespace FinanceTracker.Utils
 {
     public class UserInputReader
     {
+        private const string FILEPATH = "categories.json";
         public int GetCategory(OperationType type)
         {
-            const string FILEPATH = "categories.json";
             List<Category> categories = JsonFileManager.ReadCategoriesFromJson(FILEPATH);
             categories = categories.Where(category => category.Type == type).ToList();
 
@@ -18,14 +18,14 @@ namespace FinanceTracker.Utils
 
             while (!validEntry)
             {
-                userInput = GetInput(displayMessage, categories).ToLower();
-                foreach (var category in categories)
+                userInput = GetCategoryChoice(displayMessage, categories).ToLower();
+
+                var matchingCategory = categories.FirstOrDefault(category => category.Name?.ToLower() == userInput);
+
+                if (matchingCategory != null)
                 {
-                    if (userInput == category.Name?.ToLower())
-                    {
-                        categoryId = category.Id;
-                        validEntry = true;
-                    }
+                    categoryId = matchingCategory.Id;
+                    validEntry = true;
                 }
             }
 
@@ -76,7 +76,7 @@ namespace FinanceTracker.Utils
             return description;
         }
 
-        private string GetInput(string displayMessage, List<Category> categories)
+        private string GetCategoryChoice(string displayMessage, List<Category> categories)
         {
             string? userInput;
             bool validEntry = false;
