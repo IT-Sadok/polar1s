@@ -1,15 +1,38 @@
 ﻿using FinanceTracker.Enums;
+using FinanceTracker.Models;
 
 namespace FinanceTracker.Utils
 {
     public class UserInputReader
     {
+        private const string FILEPATH = "categories.json";
+        public int GetCategory(OperationType type)
+        {
+            List<Category> categories = JsonFileManager.ReadCategoriesFromJson(FILEPATH);
+            categories = categories.Where(category => category.Type == type).ToList();
+
+            string userInput;
+            const string displayMessage = "Enter a category from listed below:";
+
+            while (true)
+            {
+                userInput = GetCategoryChoice(displayMessage, categories).ToLower();
+
+                var matchingCategory = categories.FirstOrDefault(category => category.Name?.ToLower() == userInput);
+
+                if (matchingCategory != null)
+                {
+                    return matchingCategory.Id;
+                }
+            }
+
+        }
         public decimal GetAmount()
         {
             bool validEntry = false;
             decimal amount = 0.0m;
             string userInput;
-            string displayMessage = "Enter an amount (i.e 3.45):";
+            const string displayMessage = "Enter an amount (i.e 3.45):";
 
             while (!validEntry)
             {
@@ -22,7 +45,7 @@ namespace FinanceTracker.Utils
 
         public string GetDescription()
         {
-            string displayMessage = "Enter a description:";
+            const string displayMessage = "Enter a description:";
             string description = GetInput(displayMessage);
 
             return description;
@@ -49,6 +72,29 @@ namespace FinanceTracker.Utils
             return description;
         }
 
+        private string GetCategoryChoice(string displayMessage, List<Category> categories)
+        {
+            string? userInput;
+            bool validEntry = false;
+            string description = "";
 
+            Console.WriteLine(displayMessage);
+            foreach (var category in categories)
+            {
+                Console.WriteLine($"{category.Name}");
+            }
+
+            do
+            {
+                userInput = Console.ReadLine();
+                if (userInput != null)
+                {
+                    description = userInput.Trim();
+                    validEntry = true;
+                }
+            } while (validEntry == false);
+
+            return description;
+        }
     }
 }
