@@ -37,16 +37,16 @@ do
             display.ShowBalance(getBalanceCommand.Execute(account));
             break;
         case "4":
-            ICommand<decimal> getRecordsByCategory = new GetRecordsByCategory();
-            display.ShowCategoryRecords(getRecordsByCategory.Execute(account));
+            ICommand<decimal> getRecordsByCategoryCommand = new GetRecordsByCategory();
+            display.ShowCategoryRecords(getRecordsByCategoryCommand.Execute(account));
             break;
         case "5":
-            //command = new GetWeekStatistics();
-            //command.Execute(account);
+            ICommand<decimal> getWeekStatiscticsCommand = new GetWeekStatistics();
+            display.ShowWeekStatistics(getWeekStatiscticsCommand.Execute(account));
             break;
         case "6":
-            //command = new GetMonthStatistics();
-            //command.Execute(account);
+            ICommand<decimal> getMonthStatiscticsCommand = new GetMonthStatistics();
+            display.ShowMonthStatistics(getMonthStatiscticsCommand.Execute(account));
             break;
         default:
             break;
@@ -65,6 +65,8 @@ void DisplayMainMenu()
     Console.WriteLine("2. Add expence");
     Console.WriteLine("3. Show balance");
     Console.WriteLine("4. Get records by specific category");
+    Console.WriteLine("5. Show WEEK statistic");
+    Console.WriteLine("6. Show MONTH statistic");
     Console.WriteLine();
     Console.WriteLine("Enter your selection number (or type Exit to exit the program)");
 }
