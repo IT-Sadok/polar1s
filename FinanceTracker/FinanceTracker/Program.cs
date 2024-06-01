@@ -36,6 +36,10 @@ do
             command = new GetBalanceCommand();
             command.Execute(account);
             break;
+        case "4":
+            command = new GetRecordsByCategory();
+            command.Execute(account);
+            break;
         default:
             break;
     }
@@ -52,6 +56,7 @@ void DisplayMainMenu()
     Console.WriteLine("1. Add income");
     Console.WriteLine("2. Add expence");
     Console.WriteLine("3. Show balance");
+    Console.WriteLine("4. Get records by specific category");
     Console.WriteLine();
     Console.WriteLine("Enter your selection number (or type Exit to exit the program)");
 }
