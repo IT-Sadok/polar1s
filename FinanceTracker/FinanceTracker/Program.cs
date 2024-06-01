@@ -21,24 +21,32 @@ do
         menuSelection = userInput.ToLower();
     }
 
-    ICommand? command = null;
+    DisplayCommandInfo? display = new DisplayCommandInfo();
     switch (menuSelection)
     {
         case "1":
-            command = new AddIncomeCommand();
-            command.Execute(account);
+            ICommand<Operation> addIncomeCommand = new AddIncomeCommand();
+            account.UpdateBalance(addIncomeCommand.Execute(account));
             break;
         case "2":
-            command = new AddExpenceCommand();
-            command.Execute(account);
+            ICommand<Operation> addExpenceCommand = new AddExpenceCommand();
+            account.UpdateBalance(addExpenceCommand.Execute(account));
             break;
         case "3":
-            command = new GetBalanceCommand();
-            command.Execute(account);
+            ICommand<decimal> getBalanceCommand = new GetBalanceCommand();
+            display.ShowBalance(getBalanceCommand.Execute(account));
             break;
         case "4":
-            command = new GetRecordsByCategory();
-            command.Execute(account);
+            ICommand<decimal> getRecordsByCategory = new GetRecordsByCategory();
+            display.ShowCategoryRecords(getRecordsByCategory.Execute(account));
+            break;
+        case "5":
+            //command = new GetWeekStatistics();
+            //command.Execute(account);
+            break;
+        case "6":
+            //command = new GetMonthStatistics();
+            //command.Execute(account);
             break;
         default:
             break;
