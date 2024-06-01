@@ -37,10 +37,5 @@ namespace FinanceTracker.Models
 
             Operations.Add(operation);
         }
-
-        public decimal GetRecords(int categoryId) 
-        {
-           return Operations.Where(operation => operation.CategoryId == categoryId).Sum(operation => operation.Amount);
-        }
     }
 }

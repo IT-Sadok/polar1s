@@ -10,7 +10,8 @@ namespace FinanceTracker.Commands
         {
             UserInputReader reader = new UserInputReader();
             int categoryId = reader.GetCategory(account);
-            Console.WriteLine($"Total: {account.GetRecords(categoryId)}");
+            decimal total = account.Operations.Where(operation => operation.CategoryId == categoryId).Sum(operation => operation.Amount);
+            Console.WriteLine($"Total: {total}");
             Console.ReadLine();
         }
     }
