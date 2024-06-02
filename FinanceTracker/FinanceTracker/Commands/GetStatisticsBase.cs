@@ -12,22 +12,11 @@ namespace FinanceTracker.Commands
             DateTime startDate = GetStartDate();
             DateTime endDate = DateTime.UtcNow;
 
-            decimal total = 0.0m;
-
             var operations = account.Operations
                 .Where(operation => operation.Date >= startDate && operation.Date <= endDate);
 
-            foreach (var operation in operations)
-            {
-                if(operation.Type is OperationType.Income)
-                {
-                    total += operation.Amount;
-                }
-                else
-                {
-                    total -= operation.Amount;
-                }
-            }
+            decimal total = operations.Aggregate(0.0m, (accum, operation) 
+                => operation.Type is OperationType.Income ? accum + operation.Amount : accum - operation.Amount);
 
             return total;
         }

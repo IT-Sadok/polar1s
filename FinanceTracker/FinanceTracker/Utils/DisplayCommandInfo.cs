@@ -2,6 +2,19 @@
 {
     public class DisplayCommandInfo
     {
+        public void ShowOperationResult(bool success)
+        {
+            if (success)
+            {
+                Console.WriteLine("Done!");
+                Console.ReadLine();
+            }
+            else
+            {
+                Console.WriteLine("Oops, something went wrong:(");
+                Console.ReadLine();
+            }
+        }
         public void ShowBalance(decimal balance)
         {
             Console.WriteLine($"Balance: {balance} UAH");

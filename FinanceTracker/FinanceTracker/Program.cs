@@ -25,12 +25,14 @@ do
     switch (menuSelection)
     {
         case "1":
-            ICommand<Operation> addIncomeCommand = new AddIncomeCommand();
-            account.UpdateBalance(addIncomeCommand.Execute(account));
+            ICommand<bool> addIncomeCommand = new AddIncomeCommand();
+            display.ShowOperationResult(addIncomeCommand.Execute(account));
+            //account.UpdateBalance(addIncomeCommand.Execute(account));
             break;
         case "2":
-            ICommand<Operation> addExpenceCommand = new AddExpenceCommand();
-            account.UpdateBalance(addExpenceCommand.Execute(account));
+            ICommand<bool> addExpenceCommand = new AddExpenceCommand();
+            display.ShowOperationResult(addExpenceCommand.Execute(account));
+            //account.UpdateBalance(addExpenceCommand.Execute(account));
             break;
         case "3":
             ICommand<decimal> getBalanceCommand = new GetBalanceCommand();
