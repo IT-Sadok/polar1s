@@ -38,5 +38,11 @@
             Console.WriteLine($"Your month statistic: {statistics} UAH");
             Console.ReadLine();
         }
+
+        public void ShowExpensesByDate(decimal total)
+        {
+            Console.WriteLine($"Total expenses for that date: {total} UAH");
+            Console.ReadLine();
+        }
     }
 }

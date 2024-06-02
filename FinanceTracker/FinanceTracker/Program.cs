@@ -50,6 +50,10 @@ do
             ICommand<decimal> getMonthStatiscticsCommand = new GetMonthStatistics();
             display.ShowMonthStatistics(getMonthStatiscticsCommand.Execute(account));
             break;
+        case "7":
+            ICommand<decimal> getExpencesByDateCommand = new GetExpencesByDate();
+            display.ShowExpensesByDate(getExpencesByDateCommand.Execute(account));
+            break;
         default:
             break;
     }
@@ -69,6 +73,7 @@ void DisplayMainMenu()
     Console.WriteLine("4. Get records by specific category");
     Console.WriteLine("5. Show WEEK statistic");
     Console.WriteLine("6. Show MONTH statistic");
+    Console.WriteLine("7. Show expences for a specific date");
     Console.WriteLine();
     Console.WriteLine("Enter your selection number (or type Exit to exit the program)");
 }
