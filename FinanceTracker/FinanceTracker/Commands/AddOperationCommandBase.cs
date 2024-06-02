@@ -5,10 +5,10 @@ using FinanceTracker.Utils;
 
 namespace FinanceTracker.Commands
 {
-    public abstract class AddOperationCommandBase : ICommand
+    public abstract class AddOperationCommandBase : ICommand<bool>
     {
         protected OperationType _type;
-        public void Execute(Account account)
+        public bool Execute(Account account)
         {
             UserInputReader reader = new UserInputReader();
             Guid id = Guid.NewGuid();
@@ -18,6 +18,8 @@ namespace FinanceTracker.Commands
             DateTime date = DateTime.UtcNow;
             Operation operation = new Operation(id, _type, categoryId, amount, description, date);
             account.UpdateBalance(operation);
+
+            return (operation != null) ? true : false; 
         }
 
         public AddOperationCommandBase(OperationType type)

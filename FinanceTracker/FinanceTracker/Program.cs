@@ -21,20 +21,34 @@ do
         menuSelection = userInput.ToLower();
     }
 
-    ICommand? command = null;
+    DisplayCommandInfo? display = new DisplayCommandInfo();
     switch (menuSelection)
     {
         case "1":
-            command = new AddIncomeCommand();
-            command.Execute(account);
+            ICommand<bool> addIncomeCommand = new AddIncomeCommand();
+            display.ShowOperationResult(addIncomeCommand.Execute(account));
+            //account.UpdateBalance(addIncomeCommand.Execute(account));
             break;
         case "2":
-            command = new AddExpenceCommand();
-            command.Execute(account);
+            ICommand<bool> addExpenceCommand = new AddExpenceCommand();
+            display.ShowOperationResult(addExpenceCommand.Execute(account));
+            //account.UpdateBalance(addExpenceCommand.Execute(account));
             break;
         case "3":
-            command = new GetBalanceCommand();
-            command.Execute(account);
+            ICommand<decimal> getBalanceCommand = new GetBalanceCommand();
+            display.ShowBalance(getBalanceCommand.Execute(account));
+            break;
+        case "4":
+            ICommand<decimal> getRecordsByCategoryCommand = new GetRecordsByCategory();
+            display.ShowCategoryRecords(getRecordsByCategoryCommand.Execute(account));
+            break;
+        case "5":
+            ICommand<decimal> getWeekStatiscticsCommand = new GetWeekStatistics();
+            display.ShowWeekStatistics(getWeekStatiscticsCommand.Execute(account));
+            break;
+        case "6":
+            ICommand<decimal> getMonthStatiscticsCommand = new GetMonthStatistics();
+            display.ShowMonthStatistics(getMonthStatiscticsCommand.Execute(account));
             break;
         default:
             break;
@@ -52,6 +66,9 @@ void DisplayMainMenu()
     Console.WriteLine("1. Add income");
     Console.WriteLine("2. Add expence");
     Console.WriteLine("3. Show balance");
+    Console.WriteLine("4. Get records by specific category");
+    Console.WriteLine("5. Show WEEK statistic");
+    Console.WriteLine("6. Show MONTH statistic");
     Console.WriteLine();
     Console.WriteLine("Enter your selection number (or type Exit to exit the program)");
 }

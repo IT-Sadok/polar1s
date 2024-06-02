@@ -4,13 +4,11 @@ using System.Globalization;
 
 namespace FinanceTracker.Commands
 {
-    public class GetBalanceCommand : ICommand
+    public class GetBalanceCommand : ICommand<decimal>
     {
-        public void Execute(Account account)
+        public decimal Execute(Account account)
         {
-            Console.WriteLine($"Balance: {account.Balance} UAH");
-
-            Console.ReadLine();
+            return account.Balance;
         }
     }
 }

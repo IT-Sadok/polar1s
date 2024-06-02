@@ -2,8 +2,8 @@
 
 namespace FinanceTracker.Interfaces
 {
-    public interface ICommand
+    public interface ICommand<T>
     {
-        public void Execute(Account account);
+        public T Execute(Account account);
     }
 }

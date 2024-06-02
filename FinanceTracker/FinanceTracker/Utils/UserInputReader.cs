@@ -25,7 +25,26 @@ namespace FinanceTracker.Utils
                     return matchingCategory.Id;
                 }
             }
+        }
 
+        public int GetCategory(Account account)
+        {
+            List<Category> categories = JsonFileManager.ReadCategoriesFromJson(FILEPATH);
+            const string displayMessage = "Enter a category to get records from:";
+            string userInput = "";
+
+
+            while (true)
+            {
+                userInput = GetInput(displayMessage);
+
+                var matchingCategory = categories.FirstOrDefault(category => category.Name?.ToLower() == userInput);
+
+                if (matchingCategory != null)
+                {
+                    return matchingCategory.Id;
+                }
+            }
         }
         public decimal GetAmount()
         {
