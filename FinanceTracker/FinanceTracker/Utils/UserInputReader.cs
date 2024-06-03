@@ -1,11 +1,32 @@
 ﻿using FinanceTracker.Enums;
 using FinanceTracker.Models;
+using System.Globalization;
 
 namespace FinanceTracker.Utils
 {
     public class UserInputReader
     {
         private const string FILEPATH = "categories.json";
+
+        public DateTime GetDate()
+        {
+            DateTime date = DateTime.UtcNow;
+            bool isValid = false;
+
+            while (!isValid)
+            {
+                Console.Write("Please, enter a date (dd/MM/yyyy): ");
+                string? userInput = Console.ReadLine();
+
+                isValid = DateTime.TryParseExact(userInput, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out date);
+
+                if (!isValid)
+                    Console.WriteLine("Invalid date format. Try again.");
+            }
+
+            return date;
+        }
+
         public int GetCategory(OperationType type)
         {
             List<Category> categories = JsonFileManager.ReadCategoriesFromJson(FILEPATH);
