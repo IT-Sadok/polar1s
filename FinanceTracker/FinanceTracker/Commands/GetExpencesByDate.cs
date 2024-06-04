@@ -12,13 +12,21 @@ namespace FinanceTracker.Commands
             UserInputReader reader = new UserInputReader();
             DateTime date = reader.GetDate();
 
-            var expenses = account.Operations
+            Dictionary<DateTime, decimal> expenses = account.Operations
                 .Where(operation => operation.Type == OperationType.Expense)
                 .GroupBy(operation => operation.Date.Date)
-                .FirstOrDefault(group => group.Key == date.Date);
+                .ToDictionary(
+                operations => operations.Key,
+                operations => operations.Sum(operation => operation.Amount)
+                );
 
-            
-            return expenses?.Aggregate(0.0m, (accum, operation) => accum + operation.Amount) ?? 0.0m;
+
+            //return account.Operations
+            //    .Where(operation => operation.Type == OperationType.Expense && operation.Date.Date == date.Date)
+            //    .Sum(operation => operation.Amount);
+
+
+            return expenses.TryGetValue(date, out var total) ? total : 0.0m;
         }
     }
 }
