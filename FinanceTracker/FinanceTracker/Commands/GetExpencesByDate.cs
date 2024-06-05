@@ -26,7 +26,7 @@ namespace FinanceTracker.Commands
             //    .Sum(operation => operation.Amount);
 
 
-            return expenses.TryGetValue(date, out var total) ? total : 0.0m;
+            return expenses.TryGetValue(date, out var total) ? total : default;
         }
     }
 }
