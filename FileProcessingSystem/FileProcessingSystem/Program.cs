@@ -10,4 +10,4 @@ string inputDir = args[0];
 string outputDir = args[1];
 
 var fileHandler = new FileHandler(inputDir, outputDir);
-fileHandler.ProcessAllFilesAsync();
+await fileHandler.ProcessAllFilesAsync();
