@@ -11,7 +11,7 @@
             _outputDir = outputDir;
         }
 
-        public async Task ProcessAllFilesAsync()
+        public async void ProcessAllFilesAsync()
         {
             var files = Directory.GetFiles(_inputDir, "*.txt");
             var tasks = new List<Task>();
