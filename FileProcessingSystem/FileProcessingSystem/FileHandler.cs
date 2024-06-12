@@ -1,19 +1,30 @@
-﻿namespace FileProcessingSystem
+﻿using System.Collections.Concurrent;
+
+namespace FileProcessingSystem
 {
     public class FileHandler
     {
         private readonly string _inputDir;
         private readonly string _outputDir;
+        private readonly ConcurrentDictionary<string, int> _charCounts;
 
         public FileHandler(string inputDir, string outputDir)
         {
             _inputDir = inputDir;
             _outputDir = outputDir;
+            _charCounts = new ConcurrentDictionary<string, int>();
         }
 
         public async Task ProcessAllFilesAsync()
         {
-            var files = Directory.GetFiles(_inputDir, "*.txt");
+            var files = Directory.GetFiles(_inputDir, "*.*");
+
+            if (files.Length == 0)
+            {
+                Console.WriteLine("No files to process!");
+                return;
+            }
+
             var tasks = new List<Task>();
 
             foreach (var file in files)
@@ -22,17 +33,32 @@
             }
 
             await Task.WhenAll(tasks);
-            Console.WriteLine("All files were processed!");
+            Console.WriteLine("All files were processed!\n");
+
+            InfoDisplay.ShowCharCount(_charCounts);
         }
 
         private async Task ProcessFileAsync(string path)
         {
             var data = await FileManager.ReadFileAsync(path);
-            var editedData = await DataEditor.EditDataAsync(data);
+            var content = await DataEditor.EditDataAsync(data);
             var outputFilePath = Path.Combine(_outputDir, Path.GetFileName(path));
-            await FileManager.WriteFileAsync(outputFilePath, editedData);
+            await FileManager.WriteFileAsync(outputFilePath, content);
 
-            ProgressReporter.ShowProgress(path);
+            CountCharacters(Path.GetExtension(path), content);
+            InfoDisplay.ShowProgress(path);
+
+        }
+
+        private void CountCharacters(string fileType, string content)
+        {
+            var charCount = content.Count(c => (!Char.IsControl(c) && !Char.IsWhiteSpace(c)));
+
+            _charCounts.AddOrUpdate(
+                fileType,
+                charCount,
+                (key, value) => value + charCount
+                );
         }
     }
 }
