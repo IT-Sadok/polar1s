@@ -4,15 +4,19 @@ namespace FileProcessingSystem
 {
     public class FileHandler
     {
+        const int THREADS = 10; // number of threads that can be created concurrently
+
         private readonly string _inputDir;
         private readonly string _outputDir;
         private readonly ConcurrentDictionary<string, int> _charCounts;
+        private readonly SemaphoreSlim _semaphore;
 
         public FileHandler(string inputDir, string outputDir)
         {
             _inputDir = inputDir;
             _outputDir = outputDir;
             _charCounts = new ConcurrentDictionary<string, int>();
+            _semaphore = new SemaphoreSlim(THREADS);
         }
 
         public async Task ProcessAllFilesAsync()
@@ -40,13 +44,23 @@ namespace FileProcessingSystem
 
         private async Task ProcessFileAsync(string path)
         {
-            var data = await FileManager.ReadFileAsync(path);
-            var content = await DataEditor.EditDataAsync(data);
-            var outputFilePath = Path.Combine(_outputDir, Path.GetFileName(path));
-            await FileManager.WriteFileAsync(outputFilePath, content);
+            await _semaphore.WaitAsync();
 
-            CountCharacters(Path.GetExtension(path), content);
-            InfoDisplay.ShowProgress(path);
+            try
+            {
+                var data = await FileManager.ReadFileAsync(path);
+                var content = await DataEditor.EditDataAsync(data);
+                var outputFilePath = Path.Combine(_outputDir, Path.GetFileName(path));
+                await FileManager.WriteFileAsync(outputFilePath, content);
+
+                CountCharacters(Path.GetExtension(path), content);
+                InfoDisplay.ShowProgress(path);
+            }
+            finally
+            {
+                _semaphore.Release();
+            }
+
 
         }
 
