@@ -14,9 +14,7 @@
         {
             using(var writer = new StreamWriter(path))
             {
-                writer.AutoFlush = true;
-                await writer.WriteAsync(data);
-                
+                await writer.WriteAsync(data);              
             }
         }
     }
