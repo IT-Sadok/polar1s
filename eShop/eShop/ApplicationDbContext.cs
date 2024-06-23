@@ -34,10 +34,27 @@ namespace eShop
                 .Property(p => p.Name)
                 .IsRequired();
 
+            modelBuilder.Entity<Product>()
+                .Property(p => p.Price)
+                .IsRequired();
+
+            modelBuilder.Entity<Product>()
+                .Property(p => p.Category)
+                .IsRequired();
+
+            modelBuilder.Entity<Product>()
+                .Property(p => p.Category)
+                .HasConversion<string>();
+
             // Configuration Order table
             modelBuilder.Entity<Order>()
                 .Property(p => p.Status)
                 .HasConversion<string>();
+
+            // Configuration CartItem table
+            modelBuilder.Entity<CartItem>()
+                .Property(p => p.Quantity)
+                .IsRequired();
 
 
             base.OnModelCreating(modelBuilder);
