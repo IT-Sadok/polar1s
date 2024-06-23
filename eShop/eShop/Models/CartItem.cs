@@ -6,17 +6,17 @@ namespace eShop.Models
     {
         public int Id { get; set; }
 
-        [ForeignKey("CartId")]
+        [ForeignKey(nameof(CartId))]
         public Cart Cart { get; set; } = null!;
         public int CartId { get; set; }
 
-        [ForeignKey("ProductId")]
+        [ForeignKey(nameof(ProductId))]
         public Product Product { get; set; } = null!;
         public int ProductId { get; set; }
 
         public int Quantity { get; set; }
 
-        [ForeignKey("OrderId")]
+        [ForeignKey(nameof(OrderId))]
         public Order Order { get; set; } = null!;
         public int OrderId { get; set; }
     }

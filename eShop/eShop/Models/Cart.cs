@@ -6,7 +6,7 @@ namespace eShop.Models
     {
         public int Id { get; set; }
 
-        [ForeignKey("UserId")]
+        [ForeignKey(nameof(UserId))]
         public User User { get; set; } = null!;
         public int UserId { get; set; }
 
