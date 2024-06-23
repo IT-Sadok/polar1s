@@ -10,6 +10,6 @@ namespace eShop.Models
         public List<CartItem> Items { get; set; } = null!;
         public decimal TotalAmount { get; set; }
         public OrderStatus Status { get; set; }
-        public DateTime CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }
 }

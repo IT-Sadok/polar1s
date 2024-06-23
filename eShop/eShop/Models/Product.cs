@@ -1,4 +1,6 @@
-﻿namespace eShop.Models
+﻿using eShop.Models.Enums;
+
+namespace eShop.Models
 {
     public class Product
     {
@@ -6,7 +8,6 @@
         public string Name { get; set; } = null!;
         public string Description { get; set; } = null!;
         public decimal Price { get; set; } 
-        public string Category { get; set; } = null!;
-        public CartItem CartItem { get; set; } = null!;
+        public ProductCategory Category { get; set; }
     }
 }

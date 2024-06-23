@@ -1,5 +1,11 @@
-var builder = WebApplication.CreateBuilder(args);
+using eShop;
+using Microsoft.EntityFrameworkCore;
 
+var builder = WebApplication.CreateBuilder(args);
+var connectionString = builder.Configuration.GetConnectionString("WebApiDataBase");
+
+builder.Services.AddDbContext<ApplicationDbContext>(options
+    => options.UseNpgsql(connectionString));
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
