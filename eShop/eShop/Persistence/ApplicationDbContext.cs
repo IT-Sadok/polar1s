@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using eShop.Models;
+using eShop.Persistence.Models;
 
-namespace eShop
+namespace eShop.Persistence
 {
     public class ApplicationDbContext : DbContext
     {

@@ -1,4 +1,4 @@
-﻿namespace eShop.Models.Enums
+﻿namespace eShop.Persistence.Models.Enums
 {
     public enum ProductCategory
     {

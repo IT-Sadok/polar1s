@@ -1,4 +1,4 @@
-﻿namespace eShop.Models
+﻿namespace eShop.Persistence.Models
 {
     public class User
     {
