@@ -3,7 +3,6 @@
 namespace eShop.Persistence.Interfaces
 {
     public interface IRepository<TEntity, TFilter>
-        where TEntity: class
     {
         Task<IQueryable<TEntity>> GetAsync(TFilter filter);
         // IQueryable<TEntity> GetByCondition(Expression<Func<TEntity, bool>> condition);
