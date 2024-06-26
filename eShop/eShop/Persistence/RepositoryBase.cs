@@ -1,10 +1,8 @@
 ﻿using eShop.Persistence.Interfaces;
-using Microsoft.EntityFrameworkCore;
-using System.Linq.Expressions;
 
 namespace eShop.Persistence
 {
-    public abstract class RepositoryBase<TEntity> : IRepository<TEntity>
+    public abstract class RepositoryBase<TEntity, TFilter> : IRepository<TEntity, TFilter>
         where TEntity : class
     {
         protected ApplicationDbContext Context { get; set; }
@@ -14,31 +12,30 @@ namespace eShop.Persistence
             Context = context;
         }
 
+        public abstract Task<IQueryable<TEntity>> GetAsync(TFilter filter);
 
-        public IQueryable<TEntity> GetAll()
+        //public IQueryable<TEntity> GetByCondition(Expression<Func<TEntity, bool>> condition)
+        //{
+        //    return Context.Set<TEntity>().Where(condition);
+        //}
+
+
+        public async Task CreateAsync(TEntity entity)
         {
-            return Context.Set<TEntity>();
+            await Context.AddAsync(entity);
+            await Context.SaveChangesAsync();
         }
 
-        public IQueryable<TEntity> GetByCondition(Expression<Func<TEntity, bool>> condition)
-        {
-            return Context.Set<TEntity>().Where(condition);
-        }
-
-
-        public void Create(TEntity entity)
-        {
-            Context.Add(entity);
-        }
-
-        public void Delete(TEntity entity)
+        public async Task DeleteAsync(TEntity entity)
         {
             Context.Remove(entity);
+            await Context.SaveChangesAsync();
         }
 
-        public void Update(TEntity entity)
+        public async Task UpdateAsync(TEntity entity)
         {
             Context.Update(entity);
+            await Context.SaveChangesAsync();
         }
     }
 }
