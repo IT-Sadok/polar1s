@@ -1,6 +1,6 @@
 ﻿using eShop.Persistence.Interfaces;
 
-namespace eShop.Persistence
+namespace eShop.Persistence.Repositories
 {
     public abstract class RepositoryBase<TEntity, TFilter> : IRepository<TEntity, TFilter>
         where TEntity : class
@@ -12,7 +12,7 @@ namespace eShop.Persistence
             Context = context;
         }
 
-        public abstract Task<IQueryable<TEntity>> GetAsync(TFilter filter);
+        public abstract IQueryable<TEntity> Get(TFilter filter);
 
         //public IQueryable<TEntity> GetByCondition(Expression<Func<TEntity, bool>> condition)
         //{
@@ -20,19 +20,19 @@ namespace eShop.Persistence
         //}
 
 
-        public async Task CreateAsync(TEntity entity)
+        public async Task CreateAsync(TEntity entity, CancellationToken cancellationToken)
         {
             await Context.AddAsync(entity);
             await Context.SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(TEntity entity)
+        public async Task DeleteAsync(TEntity entity, CancellationToken cancellationToken)
         {
             Context.Remove(entity);
             await Context.SaveChangesAsync();
         }
 
-        public async Task UpdateAsync(TEntity entity)
+        public async Task UpdateAsync(TEntity entity, CancellationToken cancellationToken)
         {
             Context.Update(entity);
             await Context.SaveChangesAsync();
