@@ -1,7 +1,6 @@
 ﻿namespace eShop.Persistence.Filters
 {
-    public record OrderFilter
+    public record OrderFilter : FilterBase
     {
-        public IReadOnlyCollection<int>? Ids { get; private set; }
     }
 }

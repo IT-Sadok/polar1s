@@ -14,12 +14,6 @@ namespace eShop.Persistence.Repositories
 
         public abstract IQueryable<TEntity> Get(TFilter filter);
 
-        //public IQueryable<TEntity> GetByCondition(Expression<Func<TEntity, bool>> condition)
-        //{
-        //    return Context.Set<TEntity>().Where(condition);
-        //}
-
-
         public async Task CreateAsync(TEntity entity, CancellationToken cancellationToken)
         {
             await Context.AddAsync(entity);

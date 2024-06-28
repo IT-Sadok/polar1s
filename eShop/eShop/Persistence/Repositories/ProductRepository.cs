@@ -10,7 +10,7 @@ namespace eShop.Persistence.Repositories
 
         public override IQueryable<Product> Get(ProductFilter filter)
         {
-            IQueryable<Product> query = Context.Set<Product>().AsQueryable();
+            IQueryable<Product> query = Context.Set<Product>();
 
             if (filter.Ids != null && filter.Ids.Any())
             {

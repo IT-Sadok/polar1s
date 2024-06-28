@@ -10,7 +10,7 @@ namespace eShop.Persistence.Repositories
 
         public override IQueryable<Cart> Get(CartFilter filter)
         {
-            IQueryable<Cart> query = Context.Set<Cart>().AsQueryable();
+            IQueryable<Cart> query = Context.Set<Cart>();
 
             if (filter.Ids != null && filter.Ids.Any())
             {

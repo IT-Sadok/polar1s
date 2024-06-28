@@ -10,7 +10,7 @@ namespace eShop.Persistence.Repositories
 
         public override IQueryable<Order> Get(OrderFilter filter)
         {
-            IQueryable<Order> query = Context.Set<Order>().AsQueryable();
+            IQueryable<Order> query = Context.Set<Order>();
 
             if (filter.Ids != null && filter.Ids.Any())
             {
