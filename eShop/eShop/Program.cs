@@ -1,4 +1,4 @@
-using eShop;
+using eShop.Persistence;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);

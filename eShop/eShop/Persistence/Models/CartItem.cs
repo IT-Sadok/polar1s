@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace eShop.Models
+namespace eShop.Persistence.Models
 {
     public class CartItem
     {
