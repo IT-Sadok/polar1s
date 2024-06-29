@@ -1,9 +1,11 @@
-using eShop.Persistence;
+using eShop.Infrastructure.Persistance;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("WebApiDataBase");
+
+builder.Services.AddControllers();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options
     => options.UseNpgsql(connectionString));
