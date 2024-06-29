@@ -12,7 +12,7 @@ using eShop.Persistence;
 namespace eShop.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240629101743_InitialCreate")]
+    [Migration("20240629102537_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
