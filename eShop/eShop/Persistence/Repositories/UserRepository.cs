@@ -1,5 +1,4 @@
 ﻿using eShop.Persistence.Models;
-using eShop.Persistence.Interfaces;
 using eShop.Persistence.Filters;
 
 namespace eShop.Persistence.Repositories

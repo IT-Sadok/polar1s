@@ -5,11 +5,11 @@ namespace eShop.Persistence.Models
 {
     public class Order
     {
-        public int Id { get; set; }
+        public string Id { get; set; } = Guid.NewGuid().ToString();
 
         [ForeignKey(nameof(UserId))]
         public User User { get; set; } = null!;
-        public int UserId { get; set; }
+        public string UserId { get; set; } = null!;
 
         public List<CartItem> Items { get; set; } = null!;
         public decimal TotalAmount { get; set; }
