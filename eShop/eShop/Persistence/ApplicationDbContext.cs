@@ -1,17 +1,18 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using eShop.Persistence.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace eShop.Persistence
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : IdentityDbContext<User>
     {
-        public DbSet<User> Users { get; set; }
+        //public DbSet<User> Users { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<Cart> Carts { get; set; }
         public DbSet<CartItem> CartItems { get; set; }
         public DbSet<Order> Orders { get; set; }
 
-        public ApplicationDbContext(DbContextOptions options)
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
         }
@@ -23,11 +24,6 @@ namespace eShop.Persistence
             modelBuilder.Entity<User>()
                 .HasIndex(p => p.UserName)
                 .IsUnique();
-
-            modelBuilder.Entity<User>()
-                .Property(p => p.Password)
-                .IsRequired();
-
 
             // Configuration Product table
             modelBuilder.Entity<Product>()
