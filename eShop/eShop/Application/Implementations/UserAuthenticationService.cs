@@ -9,18 +9,20 @@ namespace eShop.Application.Implementations
 {
     public class UserAuthenticationService : IUserAuthenticationService
     {
+        private readonly IUserRoleValidationService _userRoleValidationService;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IMapper _mapper;
 
-        public UserAuthenticationService(UserManager<ApplicationUser> userManager, IMapper mapper)
+        public UserAuthenticationService(IUserRoleValidationService userRoleValidationService, UserManager<ApplicationUser> userManager, IMapper mapper)
         {
+            _userRoleValidationService = userRoleValidationService;
             _userManager = userManager;
             _mapper = mapper;
         }
 
         public async Task<IdentityResult> RegisterAsync(RegisterUserDTO registerUserDTO)
         {
-            if (!UserRolesConstants.IsRoleAllowed(registerUserDTO.Role))
+            if (!_userRoleValidationService.IsRoleAllowed(registerUserDTO.Role))
             {
                 string description = $"Invalid role. Allowed roles are: {string.Join(' ', UserRolesConstants.AllowedRoles)}";
 
