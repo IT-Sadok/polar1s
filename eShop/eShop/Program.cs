@@ -3,22 +3,34 @@ using eShop.Infrastructure.Persistance;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using eShop.Application.Implementations;
+using eShop.Persistence.Models;
+using eShop.Application.Abstractions.Wrappers;
+using eShop.Infrastructure.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("WebApiDataBase");
 
-builder.Services.AddControllers();
 
+
+builder.Services.AddScoped<IUserRoleValidationService, UserRoleValidationService>();
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+{
+    options.User.AllowedUserNameCharacters = "";
+    options.Password.RequireNonAlphanumeric = false;
+})
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddDefaultTokenProviders();
 builder.Services.AddScoped<IUserAuthenticationService, UserAuthenticationService>();
+builder.Services.AddScoped<IUserManagerWrapper<ApplicationUser>, UserManagerWrapper<ApplicationUser>>();
+
+builder.Services.AddControllers();
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 builder.Services.AddDbContext<ApplicationDbContext>(options
     => options.UseNpgsql(connectionString));
 
-builder.Services.AddIdentity<IdentityUser, IdentityRole>()
-    .AddEntityFrameworkStores<ApplicationDbContext>()
-    .AddDefaultTokenProviders();
+
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -32,8 +44,11 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseHttpsRedirection();
+
 app.UseAuthorization();
 app.UseAuthentication();
+
 app.MapControllers();
-app.UseHttpsRedirection();
+
 app.Run();

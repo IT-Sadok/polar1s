@@ -52,7 +52,18 @@ namespace eShop.Infrastructure.Persistance
                 .Property(p => p.Quantity)
                 .IsRequired();
 
+            //SeedRoles(modelBuilder);
+
             base.OnModelCreating(modelBuilder);
         }
+
+        //private void SeedRoles(ModelBuilder builder)
+        //{
+        //    builder.Entity<IdentityRole>().HasData
+        //        (
+        //            new IdentityRole() { Name = "Admin", ConcurrencyStamp = "0", NormalizedName = "Admin" },
+        //            new IdentityRole() { Name = "User", ConcurrencyStamp = "1", NormalizedName = "User" }
+        //        );
+        //}
     }
 }
