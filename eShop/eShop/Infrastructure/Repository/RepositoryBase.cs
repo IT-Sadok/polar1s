@@ -1,7 +1,7 @@
 ﻿using eShop.Application.Abstractions;
 using eShop.Infrastructure.Persistance;
 
-namespace eShop.Persistence.Repositories
+namespace eShop.Infrastructure.Repositories
 {
     public abstract class RepositoryBase<TEntity, TFilter> : IRepository<TEntity, TFilter>
         where TEntity : class

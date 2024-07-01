@@ -1,8 +1,8 @@
-﻿using eShop.Infrastructure.Persistance;
-using eShop.Persistence.Filters;
+﻿using eShop.Infrastructure.Filters;
+using eShop.Infrastructure.Persistance;
 using eShop.Persistence.Models;
 
-namespace eShop.Persistence.Repositories
+namespace eShop.Infrastructure.Repositories
 {
     public class OrderRepository : RepositoryBase<Order, OrderFilter>
     {

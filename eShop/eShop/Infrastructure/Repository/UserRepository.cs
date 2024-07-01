@@ -1,8 +1,8 @@
 ﻿using eShop.Persistence.Models;
-using eShop.Persistence.Filters;
 using eShop.Infrastructure.Persistance;
+using eShop.Infrastructure.Filters;
 
-namespace eShop.Persistence.Repositories
+namespace eShop.Infrastructure.Repositories
 {
     public class UserRepository : RepositoryBase<ApplicationUser, UserFilter>
     {
