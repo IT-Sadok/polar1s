@@ -1,4 +1,4 @@
-﻿namespace eShop.Persistence.Filters
+﻿namespace eShop.Infrastructure.Filters
 {
     public record OrderFilter : FilterBase
     {

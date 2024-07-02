@@ -4,19 +4,20 @@ using eShop.Persistence.Models;
 using Microsoft.AspNetCore.Identity;
 using eShop.Domain.Constants;
 using AutoMapper;
+using eShop.Application.Abstractions.Wrappers;
 
 namespace eShop.Application.Implementations
 {
     public class UserAuthenticationService : IUserAuthenticationService
     {
+        private readonly IUserManagerWrapper<ApplicationUser> _userManagerWrapper;
         private readonly IUserRoleValidationService _userRoleValidationService;
-        private readonly UserManager<ApplicationUser> _userManager;
         private readonly IMapper _mapper;
 
-        public UserAuthenticationService(IUserRoleValidationService userRoleValidationService, UserManager<ApplicationUser> userManager, IMapper mapper)
+        public UserAuthenticationService(IUserManagerWrapper<ApplicationUser> userManagerWrapper, IUserRoleValidationService userRoleValidationService, IMapper mapper)
         {
+            _userManagerWrapper = userManagerWrapper;
             _userRoleValidationService = userRoleValidationService;
-            _userManager = userManager;
             _mapper = mapper;
         }
 
@@ -31,11 +32,13 @@ namespace eShop.Application.Implementations
 
             var user = _mapper.Map<ApplicationUser>(registerUserDTO);
 
-            var result = await _userManager.CreateAsync(user, registerUserDTO.Password);
+            var result = await _userManagerWrapper.CreateAsync(user, registerUserDTO.Password);
+
+            
 
             if (!result.Succeeded) return result;
 
-            await _userManager.AddToRoleAsync(user, registerUserDTO.Role);
+            await _userManagerWrapper.AddToRoleAsync(user, registerUserDTO.Role);
 
             return result;
         }
