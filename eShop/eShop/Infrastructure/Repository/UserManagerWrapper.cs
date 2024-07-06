@@ -23,5 +23,11 @@ namespace eShop.Infrastructure.Repository
 
         public async Task<IList<string>> GetRolesAsync(TUser user)
             => await _userManager.GetRolesAsync(user);
+
+        public async Task<TUser?> FindByEmailAsync(string email)
+            => await _userManager.FindByEmailAsync(email);
+
+        public async Task<bool> CheckPasswordAsync(TUser user, string password)
+            => await _userManager.CheckPasswordAsync(user, password);
     }
 }

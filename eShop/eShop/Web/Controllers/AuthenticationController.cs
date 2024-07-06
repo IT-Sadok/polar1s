@@ -1,4 +1,5 @@
 ﻿using eShop.Application.Abstractions;
+using eShop.Application.DTOs.Login;
 using eShop.Application.DTOs.Register;
 using eShop.Persistence.Models;
 using Microsoft.AspNetCore.Identity;
@@ -23,6 +24,19 @@ namespace eShop.Api.Controllers
             if (result.Succeeded) return Ok();
 
             return BadRequest(result.Errors);
+        }
+
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] LoginUserDTO loginUserDTO)
+        {
+            var result = await _userAuthenticationService.LoginAsync(loginUserDTO);
+
+            if (string.IsNullOrEmpty(result))
+            {
+                return Unauthorized("Login failed");
+            }
+
+            return Ok(result);
         }
     }
 }

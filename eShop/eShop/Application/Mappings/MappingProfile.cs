@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using eShop.Application.DTOs.Login;
 using eShop.Application.DTOs.Register;
 using eShop.Persistence.Models;
 
@@ -9,6 +10,7 @@ namespace eShop.Application.Mappings
         public MappingProfile()
         {
             CreateMap<RegisterUserDTO, ApplicationUser>();
+            CreateMap<LoginUserDTO, ApplicationUser>();
         }
     }
 }

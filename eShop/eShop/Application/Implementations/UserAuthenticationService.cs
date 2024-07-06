@@ -5,25 +5,29 @@ using Microsoft.AspNetCore.Identity;
 using eShop.Domain.Constants;
 using AutoMapper;
 using eShop.Application.Abstractions.Wrappers;
+using eShop.Application.DTOs.Login;
 
 namespace eShop.Application.Implementations
 {
     public class UserAuthenticationService : IUserAuthenticationService
     {
-        private readonly IUserManagerWrapper<ApplicationUser> _userManagerWrapper;
-        private readonly IUserRoleValidationService _userRoleValidationService;
+        private readonly IUserManagerWrapper<ApplicationUser> _userManager;
+        private readonly IUserRoleValidationService _userRoleValidator;
+        private readonly ITokenGenerateService _tokenGenerator;
         private readonly IMapper _mapper;
 
-        public UserAuthenticationService(IUserManagerWrapper<ApplicationUser> userManagerWrapper, IUserRoleValidationService userRoleValidationService, IMapper mapper)
+        public UserAuthenticationService(IUserManagerWrapper<ApplicationUser> userManagerWrapper, IUserRoleValidationService userRoleValidationService, 
+            ITokenGenerateService tokenGenerateService, IMapper mapper)
         {
-            _userManagerWrapper = userManagerWrapper;
-            _userRoleValidationService = userRoleValidationService;
+            _userManager = userManagerWrapper;
+            _userRoleValidator = userRoleValidationService;
+            _tokenGenerator = tokenGenerateService;
             _mapper = mapper;
         }
 
         public async Task<IdentityResult> RegisterAsync(RegisterUserDTO registerUserDTO)
         {
-            if (!_userRoleValidationService.IsRoleAllowed(registerUserDTO.Role))
+            if (!_userRoleValidator.IsRoleAllowed(registerUserDTO.Role))
             {
                 string description = $"Invalid role. Allowed roles are: {string.Join(' ', UserRolesConstants.AllowedRoles)}";
 
@@ -32,15 +36,30 @@ namespace eShop.Application.Implementations
 
             var user = _mapper.Map<ApplicationUser>(registerUserDTO);
 
-            var result = await _userManagerWrapper.CreateAsync(user, registerUserDTO.Password);
+            var result = await _userManager.CreateAsync(user, registerUserDTO.Password);
 
             
 
             if (!result.Succeeded) return result;
 
-            await _userManagerWrapper.AddToRoleAsync(user, registerUserDTO.Role);
+            await _userManager.AddToRoleAsync(user, registerUserDTO.Role);
 
             return result;
+        }
+
+        public async Task<string> LoginAsync(LoginUserDTO loginUserDTO)
+        {
+            var user = await _userManager.FindByEmailAsync(loginUserDTO.Email);
+
+            var passwordCheck = await _userManager.CheckPasswordAsync(user!, loginUserDTO.Password);
+
+            if(user != null && !passwordCheck) return string.Empty;
+
+            var userRoles = await _userManager.GetRolesAsync(user!);
+
+            var token = await _tokenGenerator.GenerateJWTToken(user!, userRoles.ToList());
+
+            return token;
         }
     }
 }

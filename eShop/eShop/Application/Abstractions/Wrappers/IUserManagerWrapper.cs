@@ -8,5 +8,7 @@ namespace eShop.Application.Abstractions.Wrappers
         Task<IList<string>> GetRolesAsync(TUser user);
         Task<IdentityResult> AddToRoleAsync(TUser user, string role);
         Task<TUser?> FindByIdAsync(string id);
+        Task<TUser?> FindByEmailAsync(string email);
+        Task<bool> CheckPasswordAsync(TUser user, string password);
     }
 }
