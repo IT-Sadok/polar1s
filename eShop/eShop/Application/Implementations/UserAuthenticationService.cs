@@ -47,19 +47,23 @@ namespace eShop.Application.Implementations
             return result;
         }
 
-        public async Task<string> LoginAsync(LoginUserDTO loginUserDTO)
+        public async Task<LoginResponseDTO?> LoginAsync(LoginUserDTO loginUserDTO)
         {
             var user = await _userManager.FindByEmailAsync(loginUserDTO.Email);
 
+            if (user == null) return null;
+
             var passwordCheck = await _userManager.CheckPasswordAsync(user!, loginUserDTO.Password);
 
-            if(user != null && !passwordCheck) return string.Empty;
+            if(!passwordCheck) return null;
 
             var userRoles = await _userManager.GetRolesAsync(user!);
 
             var token = await _tokenGenerator.GenerateJWTToken(user!, userRoles.ToList());
 
-            return token;
+            var response = new LoginResponseDTO(user.UserName!, user.Email!, token, userRoles);
+
+            return response;
         }
     }
 }

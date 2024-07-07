@@ -1,15 +1,13 @@
 ﻿using eShop.Application.Abstractions;
 using eShop.Application.DTOs.Login;
 using eShop.Application.DTOs.Register;
-using eShop.Persistence.Models;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace eShop.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AuthenticationController : ControllerBase
+    public class AuthenticationController : Controller
     {
         private readonly IUserAuthenticationService _userAuthenticationService;
 
@@ -31,7 +29,7 @@ namespace eShop.Api.Controllers
         {
             var result = await _userAuthenticationService.LoginAsync(loginUserDTO);
 
-            if (string.IsNullOrEmpty(result))
+            if (result == null)
             {
                 return Unauthorized("Login failed");
             }

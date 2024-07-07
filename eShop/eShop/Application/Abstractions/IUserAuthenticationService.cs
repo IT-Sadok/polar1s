@@ -7,6 +7,6 @@ namespace eShop.Application.Abstractions
     public interface IUserAuthenticationService
     {
         Task<IdentityResult> RegisterAsync(RegisterUserDTO registerUserDTO);
-        Task<string> LoginAsync(LoginUserDTO loginUserDTO);
+        Task<LoginResponseDTO?> LoginAsync(LoginUserDTO loginUserDTO);
     }
 }
