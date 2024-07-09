@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace eShop.Web.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/admin")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
     public class AdminController : Controller
     {
@@ -19,7 +19,7 @@ namespace eShop.Web.Controllers
 
         }
 
-        [HttpDelete("delete-user/{userId}")]
+        [HttpDelete("user/{userId}")]
         public async Task<IActionResult> DeleteUser(string userId)
         {
             var user = await _userManager.FindByIdAsync(userId);
@@ -39,10 +39,10 @@ namespace eShop.Web.Controllers
             return Ok(new { Message = "User was deleted successfully" });
         }
 
-        [HttpPost("change-role")]
-        public async Task<IActionResult> ChangeUserRole([FromBody] ChangeUserRoleDTO changeUserRoleDTO)
+        [HttpPut("{userId}/role")]
+        public async Task<IActionResult> ChangeUserRole(string userId, [FromBody] ChangeUserRoleDTO changeUserRoleDTO)
         {
-            var user = await _userManager.FindByIdAsync(changeUserRoleDTO.UserId);
+            var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
             {
                 return NotFound(new { Message = "User not found" });
@@ -56,7 +56,7 @@ namespace eShop.Web.Controllers
                 return BadRequest(removeRolesResult.Errors);
             }
 
-            var addRoleResult = await _userManager.AddToRoleAsync(user, changeUserRoleDTO.Role);
+            var addRoleResult = await _userManager.AddToRoleAsync(user, changeUserRoleDTO.NewRole);
             if (!addRoleResult.Succeeded)
             {
                 return BadRequest(addRoleResult.Errors);
@@ -65,7 +65,7 @@ namespace eShop.Web.Controllers
             return Ok(new { Message = "User role updated successfully" });
         }
 
-        [HttpGet("get-users")]
+        [HttpGet("users")]
         public async Task<IActionResult> GetUsers()
         {
             var users = await _userManager.GetUsersAsync();
