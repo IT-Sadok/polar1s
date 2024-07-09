@@ -19,7 +19,7 @@ namespace eShop.Api.Controllers
         {
             var result = await _userAuthenticationService.RegisterAsync(registerUserDTO);
 
-            if (result.Succeeded) return Ok();
+            if (result.Succeeded) return Ok("You successfully registered a user");
 
             return BadRequest(result.Errors);
         }

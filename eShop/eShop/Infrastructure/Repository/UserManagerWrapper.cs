@@ -1,5 +1,6 @@
 ﻿using eShop.Application.Abstractions.Wrappers;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace eShop.Infrastructure.Repository
 {
@@ -29,5 +30,14 @@ namespace eShop.Infrastructure.Repository
 
         public async Task<bool> CheckPasswordAsync(TUser user, string password)
             => await _userManager.CheckPasswordAsync(user, password);
+
+        public async Task<IdentityResult> DeleteAsync(TUser user)
+            => await _userManager.DeleteAsync(user);
+
+        public async Task<IdentityResult> RemoveFromRolesAsync(TUser user, IEnumerable<string> roles)
+            => await _userManager.RemoveFromRolesAsync(user, roles);
+
+        public async Task<IEnumerable<TUser>> GetUsersAsync()
+            => await _userManager.Users.ToListAsync();
     }
 }

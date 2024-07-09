@@ -10,5 +10,8 @@ namespace eShop.Application.Abstractions.Wrappers
         Task<TUser?> FindByIdAsync(string id);
         Task<TUser?> FindByEmailAsync(string email);
         Task<bool> CheckPasswordAsync(TUser user, string password);
+        Task<IdentityResult> DeleteAsync(TUser user);
+        Task<IdentityResult> RemoveFromRolesAsync(TUser user, IEnumerable<string> role);
+        Task<IEnumerable<TUser>> GetUsersAsync();
     }
 }
