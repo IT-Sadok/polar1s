@@ -19,10 +19,10 @@ namespace eShop.Web.Controllers
 
         }
 
-        [HttpDelete("user/{userId}")]
-        public async Task<IActionResult> DeleteUser(string userId)
+        [HttpDelete("users/{id}")]
+        public async Task<IActionResult> DeleteUser(string id)
         {
-            var user = await _userManager.FindByIdAsync(userId);
+            var user = await _userManager.FindByIdAsync(id);
 
             if (user == null)
             {
@@ -39,10 +39,10 @@ namespace eShop.Web.Controllers
             return Ok(new { Message = "User was deleted successfully" });
         }
 
-        [HttpPut("{userId}/role")]
-        public async Task<IActionResult> ChangeUserRole(string userId, [FromBody] ChangeUserRoleDTO changeUserRoleDTO)
+        [HttpPut("users/{id}/role")]
+        public async Task<IActionResult> ChangeUserRole(string id, [FromBody] ChangeUserRoleDTO changeUserRoleDTO)
         {
-            var user = await _userManager.FindByIdAsync(userId);
+            var user = await _userManager.FindByIdAsync(id);
             if (user == null)
             {
                 return NotFound(new { Message = "User not found" });
