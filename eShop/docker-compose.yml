@@ -2,7 +2,7 @@ version: '3.4'
 
 services:
   eshop:
-    image: ${DOCKER_REGISTRY-}eshop
+    image: e-shop:1.0.0
     container_name: eshop
     build:
       context: .
@@ -12,7 +12,6 @@ services:
       - "8081:8081"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=https://+:8081;http://+:8080
 
   eshop.database:
     image: postgres:latest
