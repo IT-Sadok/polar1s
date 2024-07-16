@@ -479,3 +479,4 @@ $RECYCLE.BIN/
 # Dirs with generated files
 */*/inputFiles/
 */*/outputFiles/
+**/.containers/**

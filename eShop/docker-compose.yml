@@ -2,25 +2,31 @@ version: '3.4'
 
 services:
   eshop:
-    image: e-shop:1.0.0
     container_name: eshop
     build:
       context: .
       dockerfile: eShop/Dockerfile
     ports:
       - "8080:8080"
-      - "8081:8081"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
+    networks:
+      - "eshop_network"
 
-  eshop.database:
+  eshop-database:
     image: postgres:latest
-    container_name: eshop.database
+    container_name: eshop-database
     environment:
       - POSTGRES_DB=eShop
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=qwerty1234
     volumes:
-      - ./.containers/eshop-db:/var/lib/postgresql/data
+      - ./.containers/eshop-database:/var/lib/postgresql/data
     ports:
       - "5432:5432"
+    networks:
+      - "eshop_network"
+
+networks:
+  eshop_network:
+    driver: bridge
