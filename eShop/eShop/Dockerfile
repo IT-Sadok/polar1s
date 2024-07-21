@@ -3,15 +3,17 @@
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 USER app
 WORKDIR /app
-EXPOSE 8080
-EXPOSE 8081
+EXPOSE 80
+
+ARG ENVIRONMENT
+ENV ASPNETCORE_ENVIRONMENT=$ENVIRONMENT
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["eShop/eShop.csproj", "eShop/"]
+COPY ["eShop.csproj", "eShop/"]
 RUN dotnet restore "./eShop/eShop.csproj"
-COPY . .
+COPY . /src/eShop
 WORKDIR "/src/eShop"
 RUN dotnet build "./eShop.csproj" -c $BUILD_CONFIGURATION -o /app/build
 

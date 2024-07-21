@@ -14,7 +14,7 @@ services:
       - "eshop_network"
 
   eshop-database:
-    image: postgres:latest
+    image: postgres
     container_name: eshop-database
     environment:
       - POSTGRES_DB=eShop
