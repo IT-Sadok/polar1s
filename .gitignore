@@ -480,7 +480,4 @@ $RECYCLE.BIN/
 */*/inputFiles/
 */*/outputFiles/
 **/.containers/**
-
-eShop/.containers/**
-
-eShop\.containers\**
+*/.containers/
