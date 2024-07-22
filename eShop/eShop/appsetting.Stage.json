@@ -1,5 +1,5 @@
 {
   "ConnectionStrings": {
-    "WebApiDataBase": "Host=plz-work.postgres.database.azure.com; Port=5432; Database=postgres; Username=REDACTED; Password=REDACTED"
+    "WebApiDataBase": "Host=plz-work.postgres.database.azure.com; Port=5432; Database=postgres; Username=curlykapi5; Password=Qwerty_1234"
   }
 }
