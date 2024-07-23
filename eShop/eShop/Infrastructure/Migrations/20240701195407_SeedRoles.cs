@@ -27,8 +27,8 @@ namespace eShop.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "3c322207-d6e4-47a7-b8ca-5d32288573d8", "0", "Admin", "Admin" },
-                    { "6419c553-0748-49ea-bb0f-ad9bf8c698cd", "1", "User", "User" }
+                    { "3c322207-d6e4-47a7-b8ca-5d32288573d8", "0", "Admin", "ADMIN" },
+                    { "6419c553-0748-49ea-bb0f-ad9bf8c698cd", "1", "User", "USER" }
                 });
         }
 
@@ -50,8 +50,8 @@ namespace eShop.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "75953dc0-a77c-4651-87b2-b5ae5ba4f221", "0", "User", "User" },
-                    { "abfe34ca-a5c5-484b-9dfc-bf5ba52a373d", "0", "Admin", "Admin" }
+                    { "75953dc0-a77c-4651-87b2-b5ae5ba4f221", "0", "User", "USER" },
+                    { "abfe34ca-a5c5-484b-9dfc-bf5ba52a373d", "0", "Admin", "ADMIN" }
                 });
         }
     }
