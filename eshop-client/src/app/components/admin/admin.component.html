@@ -1,0 +1,31 @@
+<div class="admin-container">
+  <h1>Admin Panel</h1>
+  <div *ngIf="users.length === 0">No users found.</div>
+  <table *ngIf="users.length > 0">
+    <thead>
+      <tr>
+        <th>Username</th>
+        <th>Email</th>
+        <th>Phone Number</th>
+        <th>Roles</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let user of users">
+        <td>{{ user.userName }}</td>
+        <td>{{ user.email }}</td>
+        <td>{{ user.phoneNumber }}</td>
+        <td>{{ user.roles.join(', ') }}</td>
+        <td>
+          <button (click)="deleteUser(user.userId)">Delete</button>
+          <div>
+            <label for="newRole">New Role:</label>
+            <input [(ngModel)]="newRole" placeholder="Enter new role">
+            <button (click)="changeUserRole(user.userId)">Change Role</button>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

@@ -3,12 +3,14 @@ using eShop.Application.DTOs.Admin;
 using eShop.Persistence.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace eShop.Web.Controllers
 {
     [Route("api/admin")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+    [EnableCors("AllowSpecificOrigin")]
     public class AdminController : Controller
     {
         private readonly IUserManagerWrapper<ApplicationUser> _userManager;

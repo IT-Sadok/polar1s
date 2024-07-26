@@ -1,0 +1,12 @@
+<div class="page-container">
+    <div class="header">
+        <button class="logout-btn" (click)="logout()">Logout</button>
+    </div>
+    <div class="welcome-container">
+        <h1>Welcome to e-Shop</h1>
+        <div *ngIf="isAdmin" class="admin-notice">
+            <p>You are logged in as an Admin.</p>
+            <button class="admin-panel-btn" (click)="goToAdminPanel()">Go to Admin Panel</button>
+        </div>
+    </div>
+</div>

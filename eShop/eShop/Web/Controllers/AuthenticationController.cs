@@ -1,12 +1,14 @@
 ﻿using eShop.Application.Abstractions;
 using eShop.Application.DTOs.Login;
 using eShop.Application.DTOs.Register;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace eShop.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [EnableCors("AllowSpecificOrigin")]
     public class AuthenticationController : Controller
     {
         private readonly IUserAuthenticationService _userAuthenticationService;

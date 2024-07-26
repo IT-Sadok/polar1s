@@ -1,0 +1,51 @@
+.page-container {
+    position: relative;
+    min-height: 100vh;
+}
+
+.header {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 20px;
+}
+
+.logout-btn {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 1em;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.logout-btn:hover {
+    background-color: #d32f2f;
+}
+
+.welcome-container {
+    text-align: center;
+    padding-top: 100px; /* Добавлено, чтобы форма не скрывалась под заголовком */
+}
+
+admin-panel-btn {
+    background-color: #010102;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+admin-panel-btn:hover {
+    background-color: #010102;
+}
+
+.admin-notice {
+    margin-top: 20px;
+    font-size: 1.2em;
+    color: #333;
+}
