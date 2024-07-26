@@ -1,0 +1,78 @@
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f5f5f5;
+  }
+  
+  .login-form {
+    background: #fff;
+    padding: 20px 40px; /* Увеличение горизонтального отступа для симметрии */
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 300px;
+    box-sizing: border-box; /* Учитывать padding в ширине */
+  }
+  
+  h2 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .form-group {
+    margin-bottom: 15px;
+  }
+  
+  label {
+    display: block;
+    margin-bottom: 5px;
+  }
+  
+  input {
+    width: calc(100% - 20px); /* Уменьшение ширины на padding */
+    padding: 10px; /* Увеличение padding для симметрии */
+    margin: 0 auto; /* Центровка */
+    display: block; /* Центровка */
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    box-sizing: border-box; /* Учитывать padding в ширине */
+  }
+  
+  .btn {
+    width: calc(100% - 20px); /* Уменьшение ширины на padding */
+    padding: 10px; /* Увеличение padding для симметрии */
+    background-color: #007bff;
+    border: none;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+    display: block; /* Центровка */
+    margin: 0 auto; /* Центровка */
+  }
+  
+  .btn:hover {
+    background-color: #0056b3;
+  }
+
+  .register-link {
+    text-align: center;
+    margin-top: 10px;
+  }
+
+  .register-link a {
+    cursor: pointer;
+    text-decoration: none;
+    color: initial;
+  }
+  
+  .register-link a:hover {
+    color: green;
+  }
+
+  .error-message {
+    color: red;
+    margin-top: 20px;
+    text-align: center;
+    display: block;
+  }
