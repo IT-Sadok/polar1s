@@ -57,6 +57,7 @@ namespace eShop.Web.Controllers
             }
 
             var addRoleResult = await _userManager.AddToRoleAsync(user, changeUserRoleDTO.NewRole);
+
             if (!addRoleResult.Succeeded)
             {
                 return BadRequest(addRoleResult.Errors);
