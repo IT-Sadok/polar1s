@@ -25,7 +25,6 @@ namespace eShop.Web.Controllers
         public async Task<IActionResult> DeleteUser(string id)
         {
             var user = await _userManager.FindByIdAsync(id);
-
             if (user == null)
             {
                 return NotFound(new { Message = "User not found" });
