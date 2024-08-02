@@ -27,7 +27,7 @@ jobs:
     - name: Build and push Docker image
       run: |
         cd eShop
-        docker build -t ${{ secrets.DOCKER_USERNAME }}/eshop:latest -f Dockerfile .
+        docker build -t ${{ secrets.DOCKER_USERNAME }}/eshop:latest -f eShop/Dockerfile eShop
         docker push ${{ secrets.DOCKER_USERNAME }}/eshop:latest
 
   deploy:
