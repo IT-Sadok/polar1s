@@ -2,12 +2,14 @@ name: CI/CD for main branch
 
 on:
   pull_request:
+    types:
+      - closed
     branches:
       - main
 
 jobs:
   build:
-    if: github.event.pull_request.merged == true
+    if: github.event.pull_request.closed == true
     runs-on: ubuntu-latest
 
     steps:
