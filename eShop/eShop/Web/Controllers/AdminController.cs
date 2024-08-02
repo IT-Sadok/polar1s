@@ -31,7 +31,6 @@ namespace eShop.Web.Controllers
             }
 
             var result = await _userManager.DeleteAsync(user);
-
             if (!result.Succeeded)
             {
                 return BadRequest(result.Errors);
