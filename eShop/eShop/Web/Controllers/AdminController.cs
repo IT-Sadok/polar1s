@@ -49,6 +49,7 @@ namespace eShop.Web.Controllers
             }
 
             var currentRoles = await _userManager.GetRolesAsync(user);
+
             var removeRolesResult = await _userManager.RemoveFromRolesAsync(user, currentRoles);
 
             if (!removeRolesResult.Succeeded)
