@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'eShop/**'
 
 jobs:
   build:
@@ -24,7 +26,8 @@ jobs:
 
     - name: Build and push Docker image
       run: |
-        docker build -t ${{ secrets.DOCKER_USERNAME }}/eshop:latest -f eShop/Dockerfile eShop
+        cd eShop
+        docker build -t ${{ secrets.DOCKER_USERNAME }}/eshop:latest -f Dockerfile .
         docker push ${{ secrets.DOCKER_USERNAME }}/eshop:latest
 
   deploy:
