@@ -3,7 +3,7 @@ name: CI/CD for main branch
 on:
   push:
     branches:
-      - main/eShop
+      - main
 
 jobs:
   build:
