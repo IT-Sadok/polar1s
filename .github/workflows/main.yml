@@ -1,0 +1,70 @@
+name: CI/CD for main branch
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'eShop/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Log in to Docker Hub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+
+    - name: Build and push Docker image
+      run: |
+        cd eShop
+        docker build -t ${{ secrets.DOCKER_USERNAME }}/eshop:latest -f eShop/Dockerfile eShop
+        docker push ${{ secrets.DOCKER_USERNAME }}/eshop:latest
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+        
+    - name: Log in to Docker Hub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+
+    - name: Azure login
+      uses: azure/login@v2
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Deploy to Azure Container Instance
+      uses: azure/aci-deploy@v1
+      with:
+        location: eastasia
+        resource-group: eShop
+        name: eshop-stage
+        registry-login-server: index.docker.io
+        registry-username: ${{ secrets.DOCKER_USERNAME }}
+        registry-password: ${{ secrets.DOCKER_PASSWORD }}
+        image: hellooool/eshop:latest
+        ports: 8080 
+        dns-name-label: eshop-api
+        environment-variables: |
+          ASPNETCORE_ENVIRONMENT=Stage
+      env:
+        AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+        AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+        AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
