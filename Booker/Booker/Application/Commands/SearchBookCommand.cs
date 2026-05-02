@@ -13,11 +13,8 @@ public class SearchBookCommand : ICommand<List<Book>>
         var choice = reader.GetSearchChoice();
         var term = reader.GetSearchTerm();
 
-        return choice switch
-        {
-            "1" => books.Where(b => b.Author.Contains(term, StringComparison.OrdinalIgnoreCase)).ToList(),
-            "2" => books.Where(b => b.Name.Contains(term, StringComparison.OrdinalIgnoreCase)).ToList(),
-            _ => []
-        };
+        return choice == "1"
+            ? books.Where(b => b.Author.Contains(term, StringComparison.OrdinalIgnoreCase)).ToList()
+            : books.Where(b => b.Name.Contains(term, StringComparison.OrdinalIgnoreCase)).ToList();
     }
 }

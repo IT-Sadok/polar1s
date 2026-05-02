@@ -2,8 +2,8 @@
 
 namespace Booker.Application.Contracts
 {
-    public interface ICommand<TEntity>
+    public interface ICommand<TResult>
     {
-        TEntity Execute(List<Book> books);
+        TResult Execute(List<Book> books);
     }
 }

@@ -2,7 +2,7 @@ using Booker.Application.Commands;
 using Booker.Domain.Entity;
 using Booker.Infrastructure.Persistence;
 
-const string FILEPATH = "books.json";
+string FILEPATH = Path.Combine(AppContext.BaseDirectory, "books.json");
 
 List<Book> books = JsonFileManager.ReadFromJson(FILEPATH);
 string? menuChoice;

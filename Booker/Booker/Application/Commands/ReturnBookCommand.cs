@@ -11,10 +11,10 @@ public class ReturnBookCommand : ICommand<bool>
         var reader = new UserInputReader();
         var id = reader.GetBookId();
 
-        var book = books.FirstOrDefault(b => b.Id == id && b.Status == Status.Booked);
+        var book = books.FirstOrDefault(b => b.Id == id && b.Status == Status.Borrowed);
         if (book is null)
         {
-            Console.WriteLine("Book not found or not currently booked.");
+            Console.WriteLine("Book not found or not currently borrowed.");
             return false;
         }
 

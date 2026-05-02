@@ -38,7 +38,14 @@ public class UserInputReader
 
     public string GetSearchChoice()
     {
-        return GetNonEmptyInput("Search by (1 - Author, 2 - Name): ");
+        while (true)
+        {
+            var choice = GetNonEmptyInput("Search by (1 - Author, 2 - Name): ");
+            if (choice == "1" || choice == "2")
+                return choice;
+
+            Console.WriteLine("Invalid choice. Enter 1 or 2.");
+        }
     }
 
     public string GetSearchTerm()

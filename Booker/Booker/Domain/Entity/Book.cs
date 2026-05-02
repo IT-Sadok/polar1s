@@ -17,6 +17,6 @@
     public enum Status
     {
         Available = 0,
-        Booked = 1
+        Borrowed = 1
     }
 }

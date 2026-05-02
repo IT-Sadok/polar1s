@@ -14,12 +14,12 @@ public class BorrowBookCommand : ICommand<bool>
         var book = books.FirstOrDefault(b => b.Id == id && b.Status == Status.Available);
         if (book is null)
         {
-            Console.WriteLine("Book not found or already booked.");
+            Console.WriteLine("Book not found or already borrowed.");
             return false;
         }
 
-        book.Status = Status.Booked;
-        Console.WriteLine($"Book \"{book.Name}\" is now booked.");
+        book.Status = Status.Borrowed;
+        Console.WriteLine($"Book \"{book.Name}\" is now borrowed.");
         return true;
     }
 }
