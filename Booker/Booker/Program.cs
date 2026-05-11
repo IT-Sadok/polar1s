@@ -1,10 +1,12 @@
 using Booker.Application.Commands;
+using Booker.Application.Contracts;
 using Booker.Domain.Entity;
 using Booker.Infrastructure.Persistence;
 
 string FILEPATH = Path.Combine(AppContext.BaseDirectory, "books.json");
 
-List<Book> books = JsonFileManager.ReadFromJson(FILEPATH);
+IFileManager<Book> fileManager = new JsonFileManager<Book>();
+List<Book> books = fileManager.ReadFromFile(FILEPATH);
 string? menuChoice;
 
 do
@@ -44,7 +46,7 @@ do
 
     if (mutated)
     {
-        JsonFileManager.WriteToJson(books, FILEPATH);
+        fileManager.WriteToFile(books, FILEPATH);
     }
 
     Console.WriteLine();

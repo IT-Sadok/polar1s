@@ -1,3 +1,5 @@
+using Booker.Application.Const;
+
 namespace Booker.Infrastructure;
 
 public class UserInputReader
@@ -36,13 +38,19 @@ public class UserInputReader
         }
     }
 
-    public string GetSearchChoice()
+    public SearchOptions GetSearchChoice()
     {
         while (true)
         {
             var choice = GetNonEmptyInput("Search by (1 - Author, 2 - Name): ");
-            if (choice == "1" || choice == "2")
-                return choice;
+            if (choice == "1")
+            {
+                return SearchOptions.ByAuthor;
+            }
+            else if (choice == "2")
+            {
+                return SearchOptions.ByName;
+            }
 
             Console.WriteLine("Invalid choice. Enter 1 or 2.");
         }
