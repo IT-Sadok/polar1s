@@ -1,29 +1,28 @@
-﻿using Booker.Domain.Entity;
+﻿using Booker.Application.Contracts;
 using System.Text.Json;
 
-namespace Booker.Infrastructure.Persistence
+namespace Booker.Infrastructure.Persistence;
+
+public class JsonFileManager<TEntity> : IFileManager<TEntity>
 {
-    public class JsonFileManager
+    private static readonly JsonSerializerOptions _options = new()
     {
-        private static readonly JsonSerializerOptions _options = new()
-        {
-            WriteIndented = true
-        };
+        WriteIndented = true
+    };
 
-        public static void WriteToJson(List<Book> books, string filePath)
-        {
-            var json = JsonSerializer.Serialize(books, _options);
-            File.WriteAllText(filePath, json);
-        }
+    public void WriteToFile(List<TEntity> entities, string filePath)
+    {
+        var json = JsonSerializer.Serialize(entities, _options);
+        File.WriteAllText(filePath, json);
+    }
 
-        public static List<Book> ReadFromJson(string filePath)
+    public List<TEntity> ReadFromFile(string filePath)
+    {
+        if (!File.Exists(filePath))
         {
-            if (!File.Exists(filePath))
-            {
-                return [];
-            }
-            var json = File.ReadAllText(filePath);
-            return JsonSerializer.Deserialize<List<Book>>(json, _options) ?? [];
+            return [];
         }
+        var json = File.ReadAllText(filePath);
+        return JsonSerializer.Deserialize<List<TEntity>>(json, _options) ?? [];
     }
 }

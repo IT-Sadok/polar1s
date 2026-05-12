@@ -1,9 +1,8 @@
 ﻿using Booker.Domain.Entity;
 
-namespace Booker.Application.Contracts
+namespace Booker.Application.Contracts;
+
+public interface ICommand<TResult>
 {
-    public interface ICommand<TResult>
-    {
-        TResult Execute(List<Book> books);
-    }
+    TResult Execute(List<Book> books);
 }

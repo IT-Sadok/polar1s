@@ -1,3 +1,4 @@
+using Booker.Application.Const;
 using Booker.Application.Contracts;
 using Booker.Domain.Entity;
 using Booker.Infrastructure;
@@ -13,7 +14,7 @@ public class SearchBookCommand : ICommand<List<Book>>
         var choice = reader.GetSearchChoice();
         var term = reader.GetSearchTerm();
 
-        return choice == "1"
+        return choice == SearchOptions.ByAuthor
             ? books.Where(b => b.Author.Contains(term, StringComparison.OrdinalIgnoreCase)).ToList()
             : books.Where(b => b.Name.Contains(term, StringComparison.OrdinalIgnoreCase)).ToList();
     }
