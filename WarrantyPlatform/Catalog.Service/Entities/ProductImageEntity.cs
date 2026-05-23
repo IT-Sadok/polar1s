@@ -1,10 +1,12 @@
-namespace Catalog.Service.Domain;
+using Catalog.Service.Entities.Contracts;
 
-public class ProductImage
+namespace Catalog.Service.Entities;
+
+public class ProductImageEntity : IAuditable
 {
     public Guid Id { get; set; }
     public Guid ProductId { get; set; }
-    public Product Product { get; set; } = null!;
+    public ProductEntity Product { get; set; } = null!;
     public required string Url { get; set; }
     public bool IsPrimary { get; set; }
     public DateTime CreatedAt { get; set; }

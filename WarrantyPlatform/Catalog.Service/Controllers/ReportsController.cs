@@ -6,7 +6,7 @@ namespace Catalog.Service.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class ReportsController : ControllerBase
+public class ReportsController : ApiControllerBase
 {
     private readonly IReportsService _reportsService;
 
@@ -17,11 +17,11 @@ public class ReportsController : ControllerBase
 
     [HttpGet("top-brands-by-avg-price")]
     public async Task<ActionResult<IReadOnlyList<TopBrandResponse>>> GetTopBrandsByAvgPrice(
-        [FromQuery] int limit = 10,
+        [FromQuery] TopBrandsRequest request,
         CancellationToken ct = default)
     {
-        var result = await _reportsService.GetTopBrandsByAvgPriceAsync(limit, ct);
-        return Ok(result);
+        var result = await _reportsService.GetTopBrandsByAvgPriceAsync(request, ct);
+        return result.IsSuccess ? Ok(result.Value) : ToErrorResult(result.Error!);
     }
 
     [HttpGet("products-without-images")]
@@ -29,7 +29,7 @@ public class ReportsController : ControllerBase
         CancellationToken ct = default)
     {
         var result = await _reportsService.GetProductsWithoutImagesAsync(ct);
-        return Ok(result);
+        return result.IsSuccess ? Ok(result.Value) : ToErrorResult(result.Error!);
     }
 
     [HttpGet("cheapest-supplier-per-product")]
@@ -37,7 +37,7 @@ public class ReportsController : ControllerBase
         CancellationToken ct = default)
     {
         var result = await _reportsService.GetCheapestSupplierPerProductAsync(ct);
-        return Ok(result);
+        return result.IsSuccess ? Ok(result.Value) : ToErrorResult(result.Error!);
     }
 
     [HttpGet("products-with-multiple-suppliers")]
@@ -45,7 +45,7 @@ public class ReportsController : ControllerBase
         CancellationToken ct = default)
     {
         var result = await _reportsService.GetProductsWithMultipleSuppliersAsync(ct);
-        return Ok(result);
+        return result.IsSuccess ? Ok(result.Value) : ToErrorResult(result.Error!);
     }
 
     [HttpGet("unused-brands")]
@@ -53,6 +53,6 @@ public class ReportsController : ControllerBase
         CancellationToken ct = default)
     {
         var result = await _reportsService.GetUnusedBrandsAsync(ct);
-        return Ok(result);
+        return result.IsSuccess ? Ok(result.Value) : ToErrorResult(result.Error!);
     }
 }

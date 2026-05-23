@@ -1,4 +1,4 @@
-﻿namespace Catalog.Service.Domain.Const;
+﻿namespace Catalog.Service.Entities.Const;
 
 public enum ProductCategory
 {

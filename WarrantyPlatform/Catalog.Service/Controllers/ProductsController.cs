@@ -1,4 +1,4 @@
-﻿using Catalog.Service.Models;
+using Catalog.Service.Models;
 using Catalog.Service.Services.Contracts;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
@@ -7,7 +7,7 @@ namespace Catalog.Service.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class ProductsController : ControllerBase
+public class ProductsController : ApiControllerBase
 {
     private readonly IProductService _productService;
     private readonly IValidator<CreateProductRequest> _createValidator;
@@ -24,22 +24,19 @@ public class ProductsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IReadOnlyList<ProductResponse>>> GetAll(CancellationToken ct)
+    public async Task<ActionResult<IReadOnlyList<ProductResponse>>> GetAll(
+        [FromQuery] GetProductsRequest request,
+        CancellationToken ct)
     {
-        var products = await _productService.GetAllAsync(ct);
-        return Ok(products);
+        var result = await _productService.GetAllAsync(request, ct);
+        return result.IsSuccess ? OkPaged(result.Value!) : ToErrorResult(result.Error!);
     }
 
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<ProductResponse>> GetById(Guid id, CancellationToken ct)
     {
-        var product = await _productService.GetByIdAsync(id, ct);
-        if (product is null)
-        {
-            return NotFound();
-        }
-
-        return Ok(product);
+        var result = await _productService.GetByIdAsync(id, ct);
+        return result.IsSuccess ? Ok(result.Value) : ToErrorResult(result.Error!);
     }
 
     [HttpPost]
@@ -51,13 +48,13 @@ public class ProductsController : ControllerBase
             return ValidationProblem(new ValidationProblemDetails(validationResult.ToDictionary()));
         }
 
-        var createdProduct = await _productService.CreateAsync(request, ct);
-        if (createdProduct is null)
+        var result = await _productService.CreateAsync(request, ct);
+        if (!result.IsSuccess)
         {
-            return NotFound($"Brand {request.BrandId} not found");
+            return ToErrorResult(result.Error!);
         }
 
-        return CreatedAtAction(nameof(GetById), new { id = createdProduct.Id }, createdProduct);
+        return CreatedAtAction(nameof(GetById), new { id = result.Value!.Id }, result.Value);
     }
 
     [HttpPut("{id:guid}")]
@@ -69,24 +66,14 @@ public class ProductsController : ControllerBase
             return ValidationProblem(new ValidationProblemDetails(validationResult.ToDictionary()));
         }
 
-        var updatedProduct = await _productService.UpdateAsync(id, request, ct);
-        if (updatedProduct is null)
-        {
-            return NotFound();
-        }
-
-        return Ok(updatedProduct);
+        var result = await _productService.UpdateAsync(id, request, ct);
+        return result.IsSuccess ? Ok(result.Value) : ToErrorResult(result.Error!);
     }
 
     [HttpDelete("{id:guid}")]
     public async Task<ActionResult> Delete(Guid id, CancellationToken ct)
     {
-        var deleted = await _productService.DeleteAsync(id, ct);
-        if (!deleted)
-        {
-            return NotFound();
-        }
-
-        return NoContent();
+        var result = await _productService.DeleteAsync(id, ct);
+        return result.IsSuccess ? NoContent() : ToErrorResult(result.Error!);
     }
 }

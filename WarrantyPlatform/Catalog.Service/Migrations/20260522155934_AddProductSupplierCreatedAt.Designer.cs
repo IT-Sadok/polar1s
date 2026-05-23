@@ -3,6 +3,7 @@ using System;
 using Catalog.Service.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Catalog.Service.Migrations
 {
     [DbContext(typeof(CatalogDbContext))]
-    partial class CatalogDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260522155934_AddProductSupplierCreatedAt")]
+    partial class AddProductSupplierCreatedAt
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -139,10 +142,6 @@ namespace Catalog.Service.Migrations
                         .HasColumnType("numeric(12,2)");
 
                     b.HasKey("ProductId", "SupplierId");
-
-                    b.HasIndex("ProductId");
-
-                    NpgsqlIndexBuilderExtensions.IncludeProperties(b.HasIndex("ProductId"), new[] { "UnitCost" });
 
                     b.HasIndex("SupplierId");
 

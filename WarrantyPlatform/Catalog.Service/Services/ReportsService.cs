@@ -1,3 +1,4 @@
+using Catalog.Service.Common;
 using Catalog.Service.Data;
 using Catalog.Service.Models.Reports;
 using Catalog.Service.Services.Contracts;
@@ -14,8 +15,12 @@ public class ReportsService : IReportsService
         _dbContext = dbContext;
     }
 
-    public async Task<IReadOnlyList<TopBrandResponse>> GetTopBrandsByAvgPriceAsync(int limit, CancellationToken ct)
+    private const int MaxLimit = 100;
+
+    public async Task<Result<IReadOnlyList<TopBrandResponse>>> GetTopBrandsByAvgPriceAsync(TopBrandsRequest request, CancellationToken ct)
     {
+        var limit = Math.Clamp(request.Limit, 1, MaxLimit);
+
         // Raw SQL query was used because EF couldn't translate it from LINQ.
         var query = _dbContext.Database.SqlQuery<TopBrandResponse>($"""
             SELECT
@@ -31,20 +36,23 @@ public class ReportsService : IReportsService
             LIMIT {limit}
             """);
 
-        return await query.ToListAsync(ct);
+        var result = await query.ToListAsync(ct);
+        return Result<IReadOnlyList<TopBrandResponse>>.Success(result);
     }
 
-    public async Task<IReadOnlyList<ProductWithoutImageResponse>> GetProductsWithoutImagesAsync(CancellationToken ct)
+    public async Task<Result<IReadOnlyList<ProductWithoutImageResponse>>> GetProductsWithoutImagesAsync(CancellationToken ct)
     {
-        return await _dbContext.Products
+        var result = await _dbContext.Products
             .Where(p => !p.Images.Any())
             .Select(p => new ProductWithoutImageResponse(p.Id, p.Sku, p.Name))
             .ToListAsync(ct);
+
+        return Result<IReadOnlyList<ProductWithoutImageResponse>>.Success(result);
     }
 
-    public async Task<IReadOnlyList<CheapestSupplierResponse>> GetCheapestSupplierPerProductAsync(CancellationToken ct)
+    public async Task<Result<IReadOnlyList<CheapestSupplierResponse>>> GetCheapestSupplierPerProductAsync(CancellationToken ct)
     {
-        return await _dbContext.Products
+        var result = await _dbContext.Products
             .Where(p => p.ProductSuppliers.Any())
             .Select(p => p.ProductSuppliers
                 .OrderBy(ps => ps.UnitCost)
@@ -55,30 +63,34 @@ public class ReportsService : IReportsService
                     ps.UnitCost))
                 .First())
             .ToListAsync(ct);
+
+        return Result<IReadOnlyList<CheapestSupplierResponse>>.Success(result);
     }
 
-    public async Task<IReadOnlyList<ProductWithMultipleSuppliersResponse>> GetProductsWithMultipleSuppliersAsync(CancellationToken ct)
+    public async Task<Result<IReadOnlyList<ProductWithMultipleSuppliersResponse>>> GetProductsWithMultipleSuppliersAsync(CancellationToken ct)
     {
-        return await _dbContext.Products
+        var result = await _dbContext.Products
             .Where(p => p.ProductSuppliers.Count > 1)
             .Select(p => new ProductWithMultipleSuppliersResponse(
                 p.Id,
                 p.Sku,
                 p.Name,
-                p.ProductSuppliers.Count
-                ))
+                p.ProductSuppliers.Count))
             .ToListAsync(ct);
+
+        return Result<IReadOnlyList<ProductWithMultipleSuppliersResponse>>.Success(result);
     }
 
-    public async Task<IReadOnlyList<UnusedBrandResponse>> GetUnusedBrandsAsync(CancellationToken ct)
+    public async Task<Result<IReadOnlyList<UnusedBrandResponse>>> GetUnusedBrandsAsync(CancellationToken ct)
     {
-        return await _dbContext.Brands
+        var result = await _dbContext.Brands
             .Where(b => !b.Products.Any())
             .Select(b => new UnusedBrandResponse(
                 b.Id,
                 b.Name,
-                b.Country
-                ))
+                b.Country))
             .ToListAsync(ct);
+
+        return Result<IReadOnlyList<UnusedBrandResponse>>.Success(result);
     }
 }

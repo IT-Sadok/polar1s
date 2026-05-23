@@ -1,10 +1,9 @@
+using Catalog.Service.Common.Extensions;
 using Catalog.Service.Data;
-using Catalog.Service.Data.Seed;
 using Catalog.Service.Services;
 using Catalog.Service.Services.Contracts;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
-using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,22 +29,8 @@ builder.Services.AddScoped<IReportsService, ReportsService>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-    app.MapScalarApiReference(options =>
-    {
-        options.WithTitle("Catalog API")
-            .WithTheme(ScalarTheme.DeepSpace);
-    });
-
-    using var scope = app.Services.CreateScope();
-    var db = scope.ServiceProvider.GetRequiredService<CatalogDbContext>();
-
-    await db.Database.MigrateAsync();
-    await CatalogSeeder.SeedAsync(db);
-}
+app.MapDevelopmentApiDocs();
+await app.MigrateAndSeedDatabaseAsync();
 
 app.UseHttpsRedirection();
 

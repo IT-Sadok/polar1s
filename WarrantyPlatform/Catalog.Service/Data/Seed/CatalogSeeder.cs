@@ -1,5 +1,5 @@
-using Catalog.Service.Domain;
-using Catalog.Service.Domain.Const;
+using Catalog.Service.Entities;
+using Catalog.Service.Entities.Const;
 using Microsoft.EntityFrameworkCore;
 
 namespace Catalog.Service.Data.Seed;
@@ -70,48 +70,48 @@ public static class CatalogSeeder
         // Varying counts/prices/lead times across products for richer aggregation queries.
         // driFit, tracksuit — no suppliers on purpose (for orphaned-product queries).
         context.ProductSuppliers.AddRange(
-            new ProductSupplier { ProductId = iphone.Id, SupplierId = globalTech.Id, UnitCost = 850.00m, LeadTimeDays = 5 },
-            new ProductSupplier { ProductId = iphone.Id, SupplierId = asiaSource.Id, UnitCost = 780.00m, LeadTimeDays = 14 },
-            new ProductSupplier { ProductId = ipad.Id, SupplierId = globalTech.Id, UnitCost = 620.00m, LeadTimeDays = 5 },
-            new ProductSupplier { ProductId = macbook.Id, SupplierId = globalTech.Id, UnitCost = 1100.00m, LeadTimeDays = 7 },
-            new ProductSupplier { ProductId = macbook.Id, SupplierId = euroSupply.Id, UnitCost = 1180.00m, LeadTimeDays = 3 },
-            new ProductSupplier { ProductId = galaxyS24.Id, SupplierId = asiaSource.Id, UnitCost = 720.00m, LeadTimeDays = 12 },
-            new ProductSupplier { ProductId = galaxyS24.Id, SupplierId = quickShip.Id, UnitCost = 750.00m, LeadTimeDays = 4 },
-            new ProductSupplier { ProductId = galaxyWatch.Id, SupplierId = asiaSource.Id, UnitCost = 180.00m, LeadTimeDays = 14 },
-            new ProductSupplier { ProductId = ps5.Id, SupplierId = asiaSource.Id, UnitCost = 420.00m, LeadTimeDays = 14 },
-            new ProductSupplier { ProductId = ps5.Id, SupplierId = quickShip.Id, UnitCost = 440.00m, LeadTimeDays = 6 },
-            new ProductSupplier { ProductId = sonyHeadphones.Id, SupplierId = asiaSource.Id, UnitCost = 280.00m, LeadTimeDays = 12 },
-            new ProductSupplier { ProductId = airForce.Id, SupplierId = globalTech.Id, UnitCost = 65.00m, LeadTimeDays = 5 },
-            new ProductSupplier { ProductId = airForce.Id, SupplierId = euroSupply.Id, UnitCost = 72.00m, LeadTimeDays = 3 },
-            new ProductSupplier { ProductId = airForce.Id, SupplierId = quickShip.Id, UnitCost = 68.00m, LeadTimeDays = 4 },
-            new ProductSupplier { ProductId = ultraboost.Id, SupplierId = euroSupply.Id, UnitCost = 110.00m, LeadTimeDays = 3 },
-            new ProductSupplier { ProductId = ultraboost.Id, SupplierId = quickShip.Id, UnitCost = 115.00m, LeadTimeDays = 5 },
-            new ProductSupplier { ProductId = stanSmith.Id, SupplierId = euroSupply.Id, UnitCost = 75.00m, LeadTimeDays = 3 });
+            new ProductSupplierEntity { ProductId = iphone.Id, SupplierId = globalTech.Id, UnitCost = 850.00m, LeadTimeDays = 5 },
+            new ProductSupplierEntity { ProductId = iphone.Id, SupplierId = asiaSource.Id, UnitCost = 780.00m, LeadTimeDays = 14 },
+            new ProductSupplierEntity { ProductId = ipad.Id, SupplierId = globalTech.Id, UnitCost = 620.00m, LeadTimeDays = 5 },
+            new ProductSupplierEntity { ProductId = macbook.Id, SupplierId = globalTech.Id, UnitCost = 1100.00m, LeadTimeDays = 7 },
+            new ProductSupplierEntity { ProductId = macbook.Id, SupplierId = euroSupply.Id, UnitCost = 1180.00m, LeadTimeDays = 3 },
+            new ProductSupplierEntity { ProductId = galaxyS24.Id, SupplierId = asiaSource.Id, UnitCost = 720.00m, LeadTimeDays = 12 },
+            new ProductSupplierEntity { ProductId = galaxyS24.Id, SupplierId = quickShip.Id, UnitCost = 750.00m, LeadTimeDays = 4 },
+            new ProductSupplierEntity { ProductId = galaxyWatch.Id, SupplierId = asiaSource.Id, UnitCost = 180.00m, LeadTimeDays = 14 },
+            new ProductSupplierEntity { ProductId = ps5.Id, SupplierId = asiaSource.Id, UnitCost = 420.00m, LeadTimeDays = 14 },
+            new ProductSupplierEntity { ProductId = ps5.Id, SupplierId = quickShip.Id, UnitCost = 440.00m, LeadTimeDays = 6 },
+            new ProductSupplierEntity { ProductId = sonyHeadphones.Id, SupplierId = asiaSource.Id, UnitCost = 280.00m, LeadTimeDays = 12 },
+            new ProductSupplierEntity { ProductId = airForce.Id, SupplierId = globalTech.Id, UnitCost = 65.00m, LeadTimeDays = 5 },
+            new ProductSupplierEntity { ProductId = airForce.Id, SupplierId = euroSupply.Id, UnitCost = 72.00m, LeadTimeDays = 3 },
+            new ProductSupplierEntity { ProductId = airForce.Id, SupplierId = quickShip.Id, UnitCost = 68.00m, LeadTimeDays = 4 },
+            new ProductSupplierEntity { ProductId = ultraboost.Id, SupplierId = euroSupply.Id, UnitCost = 110.00m, LeadTimeDays = 3 },
+            new ProductSupplierEntity { ProductId = ultraboost.Id, SupplierId = quickShip.Id, UnitCost = 115.00m, LeadTimeDays = 5 },
+            new ProductSupplierEntity { ProductId = stanSmith.Id, SupplierId = euroSupply.Id, UnitCost = 75.00m, LeadTimeDays = 3 });
 
         await context.SaveChangesAsync(ct);
     }
 
-    private static async Task<Brand> EnsureBrandAsync(CatalogDbContext context, string name, string country, CancellationToken ct)
+    private static async Task<BrandEntity> EnsureBrandAsync(CatalogDbContext context, string name, string country, CancellationToken ct)
     {
         var existing = await context.Brands.FirstOrDefaultAsync(b => b.Name == name, ct);
         if (existing is not null) return existing;
 
-        var brand = new Brand { Id = Guid.NewGuid(), Name = name, Country = country };
+        var brand = new BrandEntity { Id = Guid.NewGuid(), Name = name, Country = country };
         context.Brands.Add(brand);
         return brand;
     }
 
-    private static async Task<Supplier> EnsureSupplierAsync(CatalogDbContext context, string name, string email, CancellationToken ct)
+    private static async Task<SupplierEntity> EnsureSupplierAsync(CatalogDbContext context, string name, string email, CancellationToken ct)
     {
         var existing = await context.Suppliers.FirstOrDefaultAsync(s => s.ContactEmail == email, ct);
         if (existing is not null) return existing;
 
-        var supplier = new Supplier { Id = Guid.NewGuid(), Name = name, ContactEmail = email };
+        var supplier = new SupplierEntity { Id = Guid.NewGuid(), Name = name, ContactEmail = email };
         context.Suppliers.Add(supplier);
         return supplier;
     }
 
-    private static Product NewProduct(string sku, string name, ProductCategory category, Guid brandId) =>
+    private static ProductEntity NewProduct(string sku, string name, ProductCategory category, Guid brandId) =>
         new()
         {
             Id = Guid.NewGuid(),
@@ -121,7 +121,7 @@ public static class CatalogSeeder
             BrandId = brandId,
         };
 
-    private static ProductImage NewImage(Guid productId, string url, bool isPrimary) =>
+    private static ProductImageEntity NewImage(Guid productId, string url, bool isPrimary) =>
         new()
         {
             Id = Guid.NewGuid(),

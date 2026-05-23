@@ -1,12 +1,12 @@
-using Catalog.Service.Domain;
+using Catalog.Service.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Catalog.Service.Data.Configs;
 
-public class SupplierConfiguration : IEntityTypeConfiguration<Supplier>
+public class SupplierConfiguration : IEntityTypeConfiguration<SupplierEntity>
 {
-    public void Configure(EntityTypeBuilder<Supplier> builder)
+    public void Configure(EntityTypeBuilder<SupplierEntity> builder)
     {
         builder.HasKey(s => s.Id);
 

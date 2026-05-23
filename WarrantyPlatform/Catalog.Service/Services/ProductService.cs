@@ -1,5 +1,7 @@
-﻿using Catalog.Service.Data;
-using Catalog.Service.Domain;
+using Catalog.Service.Common;
+using Catalog.Service.Common.Pagination;
+using Catalog.Service.Data;
+using Catalog.Service.Entities;
 using Catalog.Service.Mappers;
 using Catalog.Service.Models;
 using Catalog.Service.Services.Contracts;
@@ -10,40 +12,52 @@ namespace Catalog.Service.Services;
 public class ProductService : IProductService
 {
     private readonly CatalogDbContext _dbContext;
+    private readonly ILogger<ProductService> _logger;
 
-    public ProductService(CatalogDbContext dbContext)
+    public ProductService(CatalogDbContext dbContext, ILogger<ProductService> logger)
     {
         _dbContext = dbContext;
+        _logger = logger;
     }
 
-    public async Task<IReadOnlyList<ProductResponse>> GetAllAsync(CancellationToken ct)
+    public async Task<Result<PagedList<ProductResponse>>> GetAllAsync(GetProductsRequest request, CancellationToken ct)
     {
-        return await _dbContext.Products
+        var pagedList = await _dbContext.Products
+            .OrderBy(p => p.Id)
             .Select(p => new ProductResponse(
                 p.Id, p.Name, p.Sku, p.Category, p.CreatedAt,
                 new BrandResponse(p.Brand.Id, p.Brand.Name, p.Brand.Country)))
-            .ToListAsync(ct);
+            .ToPagedListAsync(request, ct);
+
+        return Result<PagedList<ProductResponse>>.Success(pagedList);
     }
 
-    public async Task<ProductResponse?> GetByIdAsync(Guid id, CancellationToken ct)
+    public async Task<Result<ProductResponse>> GetByIdAsync(Guid id, CancellationToken ct)
     {
-        return await _dbContext.Products
+        var product = await _dbContext.Products
             .Where(p => p.Id == id)
             .Select(p => new ProductResponse(
                 p.Id, p.Name, p.Sku, p.Category, p.CreatedAt,
                 new BrandResponse(p.Brand.Id, p.Brand.Name, p.Brand.Country)))
             .FirstOrDefaultAsync(ct);
+
+        if (product is null)
+        {
+            return Error.NotFound($"Product {id} not found");
+        }
+
+        return product;
     }
 
-    public async Task<ProductResponse?> CreateAsync(CreateProductRequest productModel, CancellationToken ct)
+    public async Task<Result<ProductResponse>> CreateAsync(CreateProductRequest productModel, CancellationToken ct)
     {
         var brand = await _dbContext.Brands.FirstOrDefaultAsync(b => b.Id == productModel.BrandId, ct);
         if (brand is null)
         {
-            return null;
+            return Error.NotFound($"Brand {productModel.BrandId} not found");
         }
 
-        var product = new Product
+        var product = new ProductEntity
         {
             Id = Guid.NewGuid(),
             Name = productModel.Name,
@@ -56,10 +70,12 @@ public class ProductService : IProductService
         _dbContext.Products.Add(product);
         await _dbContext.SaveChangesAsync(ct);
 
+        _logger.LogInformation("Product {ProductId} created", product.Id);
+
         return product.ToResponse();
     }
 
-    public async Task<ProductResponse?> UpdateAsync(Guid id, UpdateProductRequest productModel, CancellationToken ct)
+    public async Task<Result<ProductResponse>> UpdateAsync(Guid id, UpdateProductRequest productModel, CancellationToken ct)
     {
         var product = await _dbContext.Products
             .Include(p => p.Brand)
@@ -67,7 +83,7 @@ public class ProductService : IProductService
 
         if (product is null)
         {
-            return null;
+            return Error.NotFound($"Product {id} not found");
         }
 
         product.Name = productModel.Name;
@@ -75,20 +91,24 @@ public class ProductService : IProductService
 
         await _dbContext.SaveChangesAsync(ct);
 
+        _logger.LogInformation("Product {ProductId} updated", id);
+
         return product.ToResponse();
     }
 
-    public async Task<bool> DeleteAsync(Guid id, CancellationToken ct)
+    public async Task<Result> DeleteAsync(Guid id, CancellationToken ct)
     {
         var product = await _dbContext.Products.FirstOrDefaultAsync(p => p.Id == id, ct);
         if (product is null)
         {
-            return false;
+            return Error.NotFound($"Product {id} not found");
         }
 
         _dbContext.Products.Remove(product);
         await _dbContext.SaveChangesAsync(ct);
 
-        return true;
+        _logger.LogInformation("Product {ProductId} deleted", id);
+
+        return Result.Success();
     }
 }

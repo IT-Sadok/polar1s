@@ -1,12 +1,12 @@
-using Catalog.Service.Domain;
+using Catalog.Service.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Catalog.Service.Data.Configs;
 
-public class ProductSupplierConfiguration : IEntityTypeConfiguration<ProductSupplier>
+public class ProductSupplierConfiguration : IEntityTypeConfiguration<ProductSupplierEntity>
 {
-    public void Configure(EntityTypeBuilder<ProductSupplier> builder)
+    public void Configure(EntityTypeBuilder<ProductSupplierEntity> builder)
     {
         builder.HasKey(ps => new { ps.ProductId, ps.SupplierId });
 
@@ -22,5 +22,11 @@ public class ProductSupplierConfiguration : IEntityTypeConfiguration<ProductSupp
             .WithMany(s => s.ProductSuppliers)
             .HasForeignKey(ps => ps.SupplierId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Property(ps => ps.CreatedAt)
+            .HasDefaultValueSql("now()");
+
+        builder.HasIndex(ps => ps.ProductId)
+            .IncludeProperties(ps => ps.UnitCost);
     }
 }

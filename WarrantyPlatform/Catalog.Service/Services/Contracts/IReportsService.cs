@@ -1,12 +1,13 @@
+using Catalog.Service.Common;
 using Catalog.Service.Models.Reports;
 
 namespace Catalog.Service.Services.Contracts;
 
 public interface IReportsService
 {
-    Task<IReadOnlyList<TopBrandResponse>> GetTopBrandsByAvgPriceAsync(int limit, CancellationToken ct);
-    Task<IReadOnlyList<ProductWithoutImageResponse>> GetProductsWithoutImagesAsync(CancellationToken ct);
-    Task<IReadOnlyList<CheapestSupplierResponse>> GetCheapestSupplierPerProductAsync(CancellationToken ct);
-    Task<IReadOnlyList<ProductWithMultipleSuppliersResponse>> GetProductsWithMultipleSuppliersAsync(CancellationToken ct);
-    Task<IReadOnlyList<UnusedBrandResponse>> GetUnusedBrandsAsync(CancellationToken ct);
+    Task<Result<IReadOnlyList<TopBrandResponse>>> GetTopBrandsByAvgPriceAsync(TopBrandsRequest request, CancellationToken ct);
+    Task<Result<IReadOnlyList<ProductWithoutImageResponse>>> GetProductsWithoutImagesAsync(CancellationToken ct);
+    Task<Result<IReadOnlyList<CheapestSupplierResponse>>> GetCheapestSupplierPerProductAsync(CancellationToken ct);
+    Task<Result<IReadOnlyList<ProductWithMultipleSuppliersResponse>>> GetProductsWithMultipleSuppliersAsync(CancellationToken ct);
+    Task<Result<IReadOnlyList<UnusedBrandResponse>>> GetUnusedBrandsAsync(CancellationToken ct);
 }

@@ -1,4 +1,4 @@
-﻿using Catalog.Service.Domain.Const;
+﻿using Catalog.Service.Entities.Const;
 
 namespace Catalog.Service.Models;
 

@@ -1,12 +1,12 @@
-using Catalog.Service.Domain;
+using Catalog.Service.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Catalog.Service.Data.Configs;
 
-public class ProductImageConfiguration : IEntityTypeConfiguration<ProductImage>
+public class ProductImageConfiguration : IEntityTypeConfiguration<ProductImageEntity>
 {
-    public void Configure(EntityTypeBuilder<ProductImage> builder)
+    public void Configure(EntityTypeBuilder<ProductImageEntity> builder)
     {
         builder.HasKey(i => i.Id);
 

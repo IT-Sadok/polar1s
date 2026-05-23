@@ -1,12 +1,12 @@
-﻿using Catalog.Service.Domain;
+﻿using Catalog.Service.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Catalog.Service.Data.Configs;
 
-public class BrandConfiguration : IEntityTypeConfiguration<Brand>
+public class BrandConfiguration : IEntityTypeConfiguration<BrandEntity>
 {
-    public void Configure(EntityTypeBuilder<Brand> builder)
+    public void Configure(EntityTypeBuilder<BrandEntity> builder)
     {
         builder.HasKey(b => b.Id);
 
