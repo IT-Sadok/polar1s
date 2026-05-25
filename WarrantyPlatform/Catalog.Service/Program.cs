@@ -1,3 +1,4 @@
+using Catalog.Service.Common.Configuration;
 using Catalog.Service.Common.Extensions;
 using Catalog.Service.Common.Filters;
 using Catalog.Service.Data;
@@ -5,16 +6,25 @@ using Catalog.Service.Services;
 using Catalog.Service.Services.Contracts;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services
+    .AddOptions<DatabaseOptions>()
+    .Bind(builder.Configuration.GetSection(DatabaseOptions.SectionName));
+builder.Services
+    .AddOptions<CacheOptions>()
+    .Bind(builder.Configuration.GetSection(CacheOptions.SectionName));
 
 builder.Services.AddControllers(options => options.Filters.Add<ValidationFilter>());
 builder.Services.AddScoped<ValidationFilter>();
 builder.Services.AddOpenApi();
 
-builder.Services.AddDbContext<CatalogDbContext>(options =>
+builder.Services.AddDbContext<CatalogDbContext>((sp, options) =>
 {
-    options.UseNpgsql(builder.Configuration.GetConnectionString("Catalog"));
+    var db = sp.GetRequiredService<IOptions<DatabaseOptions>>().Value;
+    options.UseNpgsql(db.ConnectionString);
 
     if (builder.Environment.IsDevelopment())
     {
@@ -24,10 +34,14 @@ builder.Services.AddDbContext<CatalogDbContext>(options =>
     }
 });
 
+var cacheConfig = builder.Configuration
+    .GetSection(CacheOptions.SectionName)
+    .Get<CacheOptions>()!;
+
 builder.Services.AddStackExchangeRedisCache(options =>
 {
-    options.Configuration = builder.Configuration.GetConnectionString("Redis");
-    options.InstanceName = "catalog:";
+    options.Configuration = cacheConfig.ConnectionString;
+    options.InstanceName = cacheConfig.InstanceName;
 });
 
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();

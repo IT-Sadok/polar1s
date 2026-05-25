@@ -1,5 +1,6 @@
 using Catalog.Service.Common;
 using Catalog.Service.Common.Cache;
+using Catalog.Service.Common.Configuration;
 using Catalog.Service.Common.Pagination;
 using Catalog.Service.Data;
 using Catalog.Service.Mappers;
@@ -7,24 +8,26 @@ using Catalog.Service.Models;
 using Catalog.Service.Services.Contracts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Options;
 
 namespace Catalog.Service.Services;
 
 public class ProductService : IProductService
 {
-    private static readonly TimeSpan CacheTtl = TimeSpan.FromHours(1);
-
     private readonly CatalogDbContext _dbContext;
     private readonly IDistributedCache _cache;
+    private readonly TimeSpan _cacheTtl;
     private readonly ILogger<ProductService> _logger;
 
     public ProductService(
         CatalogDbContext dbContext,
         IDistributedCache cache,
+        IOptions<CacheOptions> cacheOptions,
         ILogger<ProductService> logger)
     {
         _dbContext = dbContext;
         _cache = cache;
+        _cacheTtl = cacheOptions.Value.AbsoluteExpiration;
         _logger = logger;
     }
 
@@ -42,11 +45,9 @@ public class ProductService : IProductService
 
     public async Task<Result<ProductResponse>> GetByIdAsync(Guid id, CancellationToken ct)
     {
-        var cacheKey = $"{KeyPrefixes.Product}{id}";
-
         try
         {
-            var cached = await _cache.GetRecordAsync<ProductResponse>(cacheKey, ct);
+            var cached = await _cache.GetRecordAsync<ProductResponse>(id.ToString(), ct);
             if (cached is not null)
             {
                 return cached;
@@ -71,7 +72,7 @@ public class ProductService : IProductService
 
         try
         {
-            await _cache.SetRecordAsync(cacheKey, product, ct, CacheTtl);
+            await _cache.SetRecordAsync(id.ToString(), product, ct, _cacheTtl);
         }
         catch (Exception ex)
         {
@@ -116,7 +117,7 @@ public class ProductService : IProductService
 
         try
         {
-            await _cache.InvalidateCacheAsync(KeyPrefixes.Product, id, ct);
+            await _cache.InvalidateCacheAsync(id, ct);
         }
         catch (Exception ex)
         {
@@ -141,7 +142,7 @@ public class ProductService : IProductService
 
         try
         {
-            await _cache.InvalidateCacheAsync(KeyPrefixes.Product, id, ct);
+            await _cache.InvalidateCacheAsync(id, ct);
         }
         catch (Exception ex)
         {

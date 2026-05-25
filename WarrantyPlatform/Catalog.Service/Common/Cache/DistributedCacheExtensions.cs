@@ -34,7 +34,6 @@ public static class DistributedCacheExtensions
 
     public static async Task InvalidateCacheAsync(
         this IDistributedCache cache,
-        string prefix,
         Guid id,
-        CancellationToken ct) => await cache.RemoveAsync($"{prefix}{id}", ct);
+        CancellationToken ct) => await cache.RemoveAsync(id.ToString(), ct);
 }
