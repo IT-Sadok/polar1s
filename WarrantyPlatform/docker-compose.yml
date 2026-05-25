@@ -3,8 +3,8 @@ services:
     container_name: warranty-postgres
     image: postgres:18
     environment:
-      POSTGRES_USER: YOUR_USERNAME
-      POSTGRES_PASSWORD: YOUR_PASSWORD
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
       POSTGRES_DB: catalogdb
     ports:
       - "5432:5432"
@@ -16,5 +16,19 @@ services:
       timeout: 3s
       retries: 5
 
+  redis:
+    container_name: warranty-redis
+    image: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
 volumes:
   postgres_data:
+  redis_data:

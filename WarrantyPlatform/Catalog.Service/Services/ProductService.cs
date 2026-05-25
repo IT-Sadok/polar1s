@@ -1,22 +1,30 @@
 using Catalog.Service.Common;
+using Catalog.Service.Common.Cache;
 using Catalog.Service.Common.Pagination;
 using Catalog.Service.Data;
-using Catalog.Service.Entities;
 using Catalog.Service.Mappers;
 using Catalog.Service.Models;
 using Catalog.Service.Services.Contracts;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
 
 namespace Catalog.Service.Services;
 
 public class ProductService : IProductService
 {
+    private static readonly TimeSpan CacheTtl = TimeSpan.FromHours(1);
+
     private readonly CatalogDbContext _dbContext;
+    private readonly IDistributedCache _cache;
     private readonly ILogger<ProductService> _logger;
 
-    public ProductService(CatalogDbContext dbContext, ILogger<ProductService> logger)
+    public ProductService(
+        CatalogDbContext dbContext,
+        IDistributedCache cache,
+        ILogger<ProductService> logger)
     {
         _dbContext = dbContext;
+        _cache = cache;
         _logger = logger;
     }
 
@@ -34,6 +42,21 @@ public class ProductService : IProductService
 
     public async Task<Result<ProductResponse>> GetByIdAsync(Guid id, CancellationToken ct)
     {
+        var cacheKey = $"{KeyPrefixes.Product}{id}";
+
+        try
+        {
+            var cached = await _cache.GetRecordAsync<ProductResponse>(cacheKey, ct);
+            if (cached is not null)
+            {
+                return cached;
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Cache read failed for product {ProductId}", id);
+        }
+
         var product = await _dbContext.Products
             .Where(p => p.Id == id)
             .Select(p => new ProductResponse(
@@ -44,6 +67,15 @@ public class ProductService : IProductService
         if (product is null)
         {
             return Error.NotFound($"Product {id} not found");
+        }
+
+        try
+        {
+            await _cache.SetRecordAsync(cacheKey, product, ct, CacheTtl);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Cache write failed for product {ProductId}", id);
         }
 
         return product;
@@ -57,16 +89,7 @@ public class ProductService : IProductService
             return Error.NotFound($"Brand {productModel.BrandId} not found");
         }
 
-        var product = new ProductEntity
-        {
-            Id = Guid.NewGuid(),
-            Name = productModel.Name,
-            Sku = productModel.Sku,
-            Category = productModel.Category,
-            BrandId = productModel.BrandId,
-            Brand = brand,
-        };
-
+        var product = productModel.ToEntity(brand);
         _dbContext.Products.Add(product);
         await _dbContext.SaveChangesAsync(ct);
 
@@ -91,6 +114,15 @@ public class ProductService : IProductService
 
         await _dbContext.SaveChangesAsync(ct);
 
+        try
+        {
+            await _cache.InvalidateCacheAsync(KeyPrefixes.Product, id, ct);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Cache invalidation failed for product {ProductId}", id);
+        }
+
         _logger.LogInformation("Product {ProductId} updated", id);
 
         return product.ToResponse();
@@ -106,6 +138,15 @@ public class ProductService : IProductService
 
         _dbContext.Products.Remove(product);
         await _dbContext.SaveChangesAsync(ct);
+
+        try
+        {
+            await _cache.InvalidateCacheAsync(KeyPrefixes.Product, id, ct);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Cache invalidation failed for product {ProductId}", id);
+        }
 
         _logger.LogInformation("Product {ProductId} deleted", id);
 

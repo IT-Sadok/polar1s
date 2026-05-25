@@ -1,4 +1,5 @@
 using Catalog.Service.Common;
+using Catalog.Service.Common.Const;
 using Catalog.Service.Common.Pagination;
 using Microsoft.AspNetCore.Mvc;
 
@@ -6,16 +7,20 @@ namespace Catalog.Service.Controllers;
 
 public abstract class ApiControllerBase : ControllerBase
 {
-    protected ActionResult ToErrorResult(Error error) => error.Type switch
+    protected ActionResult ToErrorResult(IReadOnlyCollection<Error> errors)
     {
-        ErrorType.NotFound => NotFound(error.Message),
-        _ => StatusCode(StatusCodes.Status500InternalServerError),
-    };
+        var error = errors.First();
+        return error.Type switch
+        {
+            ErrorType.NotFound => NotFound(error.Message),
+            _ => StatusCode(StatusCodes.Status500InternalServerError),
+        };
+    }
 
     protected ActionResult OkPaged<T>(PagedList<T> pagedList)
     {
-        Response.Headers["X-Pagination"] = pagedList.CreateMetadata();
-        Response.Headers.AccessControlExposeHeaders = "X-Pagination";
+        Response.Headers[CustomHeaders.Pagination] = pagedList.CreateMetadata();
+        Response.Headers.AccessControlExposeHeaders = CustomHeaders.Pagination;
         return Ok(pagedList);
     }
 }

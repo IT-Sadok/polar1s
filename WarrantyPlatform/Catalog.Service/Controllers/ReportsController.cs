@@ -21,7 +21,7 @@ public class ReportsController : ApiControllerBase
         CancellationToken ct = default)
     {
         var result = await _reportsService.GetTopBrandsByAvgPriceAsync(request, ct);
-        return result.IsSuccess ? Ok(result.Value) : ToErrorResult(result.Error!);
+        return result.IsSuccess ? Ok(result.Value) : ToErrorResult(result.Errors);
     }
 
     [HttpGet("products-without-images")]
@@ -29,7 +29,7 @@ public class ReportsController : ApiControllerBase
         CancellationToken ct = default)
     {
         var result = await _reportsService.GetProductsWithoutImagesAsync(ct);
-        return result.IsSuccess ? Ok(result.Value) : ToErrorResult(result.Error!);
+        return result.IsSuccess ? Ok(result.Value) : ToErrorResult(result.Errors);
     }
 
     [HttpGet("cheapest-supplier-per-product")]
@@ -37,7 +37,7 @@ public class ReportsController : ApiControllerBase
         CancellationToken ct = default)
     {
         var result = await _reportsService.GetCheapestSupplierPerProductAsync(ct);
-        return result.IsSuccess ? Ok(result.Value) : ToErrorResult(result.Error!);
+        return result.IsSuccess ? Ok(result.Value) : ToErrorResult(result.Errors);
     }
 
     [HttpGet("products-with-multiple-suppliers")]
@@ -45,7 +45,7 @@ public class ReportsController : ApiControllerBase
         CancellationToken ct = default)
     {
         var result = await _reportsService.GetProductsWithMultipleSuppliersAsync(ct);
-        return result.IsSuccess ? Ok(result.Value) : ToErrorResult(result.Error!);
+        return result.IsSuccess ? Ok(result.Value) : ToErrorResult(result.Errors);
     }
 
     [HttpGet("unused-brands")]
@@ -53,6 +53,6 @@ public class ReportsController : ApiControllerBase
         CancellationToken ct = default)
     {
         var result = await _reportsService.GetUnusedBrandsAsync(ct);
-        return result.IsSuccess ? Ok(result.Value) : ToErrorResult(result.Error!);
+        return result.IsSuccess ? Ok(result.Value) : ToErrorResult(result.Errors);
     }
 }

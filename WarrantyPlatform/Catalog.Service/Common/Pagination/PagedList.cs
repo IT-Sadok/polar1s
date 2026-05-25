@@ -4,6 +4,8 @@ namespace Catalog.Service.Common.Pagination;
 
 public class PagedList<T> : List<T>
 {
+    private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web);
+
     public PagedList(IEnumerable<T> items, int count, int pageNumber, int pageSize)
     {
         TotalCount = count;
@@ -29,5 +31,5 @@ public class PagedList<T> : List<T>
             TotalPages = TotalPages,
             HasNext = HasNext,
             HasPrevious = HasPrevious,
-        });
+        }, JsonOptions);
 }
