@@ -1,7 +1,6 @@
-﻿namespace Catalog.Service.Common.Cache
+﻿namespace Catalog.Service.Common.Cache;
+
+public static class KeyPrefixes
 {
-    public static class KeyPrefixes
-    {
-        public const string Product = "product:";
-    }
+    public const string Product = "product:";
 }

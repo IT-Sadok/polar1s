@@ -36,8 +36,5 @@ public static class DistributedCacheExtensions
         this IDistributedCache cache,
         string prefix,
         Guid id,
-        CancellationToken ct)
-    {
-        await cache.RemoveAsync($"{prefix}{id}", ct);
-    }
+        CancellationToken ct) => await cache.RemoveAsync($"{prefix}{id}", ct);
 }
