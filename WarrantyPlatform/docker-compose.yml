@@ -1,6 +1,6 @@
 services:
-  postgres:
-    container_name: warranty-postgres
+  catalog-postgres:
+    container_name: catalog-postgres
     image: postgres:18
     environment:
       POSTGRES_USER: postgres
@@ -10,6 +10,23 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  warranty-postgres:
+    container_name: warranty-postgres
+    image: postgres:18
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: warrantydb
+    ports:
+      - "5433:5432"
+    volumes:
+      - warranty_postgres_data:/var/lib/postgresql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 5s
@@ -31,4 +48,5 @@ services:
 
 volumes:
   postgres_data:
+  warranty_postgres_data:
   redis_data:

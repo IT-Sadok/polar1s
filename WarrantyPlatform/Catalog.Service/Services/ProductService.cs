@@ -34,7 +34,8 @@ public class ProductService : IProductService
     public async Task<Result<PagedList<ProductResponse>>> GetAllAsync(GetProductsRequest request, CancellationToken ct)
     {
         var pagedList = await _dbContext.Products
-            .OrderBy(p => p.Id)
+            .OrderByDescending(p => p.CreatedAt)
+            .ThenBy(p => p.Id)
             .Select(p => new ProductResponse(
                 p.Id, p.Name, p.Sku, p.Category, p.CreatedAt,
                 new BrandResponse(p.Brand.Id, p.Brand.Name, p.Brand.Country)))
