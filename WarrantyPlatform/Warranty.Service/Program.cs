@@ -10,14 +10,14 @@ using Warranty.Service.Services.Contracts;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services
-    .AddOptions<DatabaseOptions>()
-    .Bind(builder.Configuration.GetSection(DatabaseOptions.SectionName));
+    .AddOptions<GeneralDatabaseOptions>()
+    .Bind(builder.Configuration.GetSection(GeneralDatabaseOptions.SectionName));
 
 builder.Services.AddOpenApi();
 
 builder.Services.AddDbContext<WarrantyDbContext>((sp, options) =>
 {
-    var db = sp.GetRequiredService<IOptions<DatabaseOptions>>().Value;
+    var db = sp.GetRequiredService<IOptions<GeneralDatabaseOptions>>().Value;
     options.UseNpgsql(db.ConnectionString);
 
     if (builder.Environment.IsDevelopment())
