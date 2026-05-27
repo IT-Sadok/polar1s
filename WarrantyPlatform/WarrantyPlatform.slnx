@@ -4,5 +4,6 @@
   </Folder>
   <Folder Name="/src/">
     <Project Path="Catalog.Service/Catalog.Service.csproj" />
+    <Project Path="Warranty.Service/Warranty.Service.csproj" Id="3a7da71f-0d8c-41a6-81f2-39311300d51f" />
   </Folder>
 </Solution>
