@@ -62,4 +62,13 @@ public class WarrantyService : IWarrantyService
 
         return warranty;
     }
+
+    public async Task<Result<WarrantyResponse>> CreateAsync(CreateWarrantyRequest request, CancellationToken ct)
+    {
+        var warranty = request.ToEntity();
+        _dbContext.Warranties.Add(warranty);
+        await _dbContext.SaveChangesAsync(ct);
+
+        return warranty.ToResponse();
+    }
 }

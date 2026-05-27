@@ -11,4 +11,6 @@ public interface IWarrantyService
         CancellationToken ct);
 
     Task<Result<WarrantyResponse>> GetByIdAsync(Guid id, CancellationToken ct);
+
+    Task<Result<WarrantyResponse>> CreateAsync(CreateWarrantyRequest request, CancellationToken ct);
 }

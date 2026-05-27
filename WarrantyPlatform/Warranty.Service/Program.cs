@@ -1,3 +1,4 @@
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Warranty.Service.Common.Configuration;
@@ -29,6 +30,7 @@ builder.Services.AddDbContext<WarrantyDbContext>((sp, options) =>
 });
 
 builder.Services.AddScoped<IWarrantyService, WarrantyService>();
+builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
 var app = builder.Build();
 
