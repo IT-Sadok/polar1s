@@ -6,6 +6,7 @@ namespace Warranty.Service.Data;
 public class WarrantyDbContext(DbContextOptions<WarrantyDbContext> options) : DbContext(options)
 {
     public DbSet<WarrantyEntity> Warranties => Set<WarrantyEntity>();
+    public DbSet<OutboxMessageEntity> OutboxMessages => Set<OutboxMessageEntity>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
