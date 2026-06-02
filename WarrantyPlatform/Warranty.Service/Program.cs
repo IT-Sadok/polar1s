@@ -57,7 +57,7 @@ builder.Services.AddSingleton(sp =>
     var config = new ProducerConfig
     {
         BootstrapServers = options.BootstrapServers,
-        Acks = Acks.All,
+        Acks = options.Producers.WarrantyEvents.Acks,
         EnableIdempotence = true,
         MessageSendMaxRetries = 3,
     };

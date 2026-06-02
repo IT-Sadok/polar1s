@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Warranty.Service.Common;
+using Warranty.Service.Common.Configuration;
 using Warranty.Service.Common.Messaging;
 using Warranty.Service.Common.Messaging.Const;
 using Warranty.Service.Common.Pagination;
@@ -16,15 +18,18 @@ public class WarrantyService : IWarrantyService
     private readonly WarrantyDbContext _dbContext;
     private readonly IEventPublisher _eventPublisher;
     private readonly ILogger<WarrantyService> _logger;
+    private readonly string _eventsTopic;
 
     public WarrantyService(
         WarrantyDbContext dbContext,
         IEventPublisher eventPublisher,
+        IOptions<KafkaOptions> kafkaOptions,
         ILogger<WarrantyService> logger)
     {
         _dbContext = dbContext;
         _eventPublisher = eventPublisher;
         _logger = logger;
+        _eventsTopic = kafkaOptions.Value.Producers.WarrantyEvents.Topic ?? WarrantyTopics.Events;
     }
 
     public async Task<Result<CursorPage<WarrantyResponse>>> GetByCustomerAsync(GetWarrantiesByCustomerRequest request, CancellationToken ct)
@@ -80,7 +85,7 @@ public class WarrantyService : IWarrantyService
             warranty.ToRegisteredEvent(),
             new EventMetadata(
                 Type: WarrantyEventTypes.Registered,
-                Topic: WarrantyTopics.Events,
+                Topic: _eventsTopic,
                 AggregateType: nameof(WarrantyEntity),
                 AggregateId: warranty.Id,
                 PartitionKey: warranty.CustomerId.ToString()),
