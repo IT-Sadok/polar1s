@@ -12,7 +12,8 @@
     },
     "channel": {
       "type": "string",
-      "description": "Delivery channel, e.g. Email or Push."
+      "enum": ["Email", "Push"],
+      "description": "Delivery channel."
     },
     "recipient": {
       "type": "string",
