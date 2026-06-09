@@ -1,0 +1,32 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://warrantyplatform.local/schemas/send-notification-command-v1.json",
+  "title": "SendNotificationCommand",
+  "description": "Instructs the Notification service to deliver a notification through a channel.",
+  "type": "object",
+  "properties": {
+    "notificationId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique identifier of the notification, used by the consumer for idempotency."
+    },
+    "channel": {
+      "type": "string",
+      "description": "Delivery channel, e.g. Email or Push."
+    },
+    "recipient": {
+      "type": "string",
+      "description": "Channel-specific recipient address (email, device token, customer id)."
+    },
+    "subject": {
+      "type": "string",
+      "description": "Short notification subject/title."
+    },
+    "body": {
+      "type": "string",
+      "description": "Rendered notification body."
+    }
+  },
+  "required": ["notificationId", "channel", "recipient", "subject", "body"],
+  "additionalProperties": false
+}

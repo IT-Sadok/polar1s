@@ -1,4 +1,4 @@
-namespace Notification.Service.Contracts.Events;
+namespace NotificationOrchestrator.Service.Contracts.Events;
 
 public sealed record WarrantyRegisteredEvent(
     Guid WarrantyId,

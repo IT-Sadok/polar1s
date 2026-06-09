@@ -10,24 +10,24 @@ using Newtonsoft.Json.Serialization;
 using NJsonSchema.NewtonsoftJson.Generation;
 using Notification.Service.Common.Configuration;
 using Notification.Service.Common.Messaging.Const;
-using Notification.Service.Contracts.Events;
+using Notification.Service.Contracts.Commands;
 using Notification.Service.Data;
 using Notification.Service.Entities;
 
 namespace Notification.Service.Consumers;
 
-public class WarrantyEventsConsumer : BackgroundService
+public class NotificationCommandsConsumer : BackgroundService
 {
     private readonly IServiceScopeFactory _scopeFactory;
     private readonly ISchemaRegistryClient _schemaRegistry;
     private readonly KafkaOptions _kafkaOptions;
-    private readonly ILogger<WarrantyEventsConsumer> _logger;
+    private readonly ILogger<NotificationCommandsConsumer> _logger;
 
-    public WarrantyEventsConsumer(
+    public NotificationCommandsConsumer(
         IServiceScopeFactory scopeFactory,
         ISchemaRegistryClient schemaRegistry,
         IOptions<KafkaOptions> kafkaOptions,
-        ILogger<WarrantyEventsConsumer> logger)
+        ILogger<NotificationCommandsConsumer> logger)
     {
         _scopeFactory = scopeFactory;
         _schemaRegistry = schemaRegistry;
@@ -39,8 +39,8 @@ public class WarrantyEventsConsumer : BackgroundService
     {
         await Task.Yield();
 
-        var consumerOptions = _kafkaOptions.Consumers.WarrantyEvents;
-        var topic = consumerOptions.Topic ?? WarrantyTopics.Events;
+        var consumerOptions = _kafkaOptions.Consumers.NotificationCommands;
+        var topic = consumerOptions.Topic ?? NotificationTopics.Commands;
 
         var config = new ConsumerConfig
         {
@@ -57,12 +57,12 @@ public class WarrantyEventsConsumer : BackgroundService
                 ContractResolver = new CamelCasePropertyNamesContractResolver()
             }
         };
-        var deserializer = new JsonDeserializer<WarrantyRegisteredEvent>(
+        var deserializer = new JsonDeserializer<SendNotificationCommand>(
             _schemaRegistry,
             config: null,
             jsonSchemaGeneratorSettings: schemaGeneratorSettings);
 
-        using var consumer = new ConsumerBuilder<string, WarrantyRegisteredEvent>(config)
+        using var consumer = new ConsumerBuilder<string, SendNotificationCommand>(config)
             .SetValueDeserializer(deserializer.AsSyncOverAsync())
             .SetErrorHandler((_, e) => _logger.LogError("Kafka consumer error: {Reason}", e.Reason))
             .Build();
@@ -76,7 +76,7 @@ public class WarrantyEventsConsumer : BackgroundService
         {
             while (!stoppingToken.IsCancellationRequested)
             {
-                ConsumeResult<string, WarrantyRegisteredEvent> result;
+                ConsumeResult<string, SendNotificationCommand> result;
                 try
                 {
                     result = consumer.Consume(stoppingToken);
@@ -105,9 +105,10 @@ public class WarrantyEventsConsumer : BackgroundService
         }
     }
 
-    private async Task HandleAsync(ConsumeResult<string, WarrantyRegisteredEvent> result, CancellationToken ct)
+    private async Task HandleAsync(ConsumeResult<string, SendNotificationCommand> result, CancellationToken ct)
     {
-        var messageId = ExtractMessageId(result.Message.Headers);
+        var command = result.Message.Value;
+        var messageId = command.NotificationId;
         var eventType = ExtractHeader(result.Message.Headers, CloudEventHeaders.Type);
 
         using var scope = _scopeFactory.CreateScope();
@@ -118,7 +119,7 @@ public class WarrantyEventsConsumer : BackgroundService
 
         if (alreadyProcessed)
         {
-            _logger.LogInformation("Duplicate message {MessageId} skipped", messageId);
+            _logger.LogInformation("Duplicate notification {MessageId} skipped", messageId);
             return;
         }
 
@@ -130,16 +131,9 @@ public class WarrantyEventsConsumer : BackgroundService
         });
         await dbContext.SaveChangesAsync(ct);
 
-        var payload = result.Message.Value;
         _logger.LogInformation(
-            "Sent notification for WarrantyRegistered {MessageId}: warranty {WarrantyId} registered for customer {CustomerId}",
-            messageId, payload.WarrantyId, payload.CustomerId);
-    }
-
-    private static Guid ExtractMessageId(Headers headers)
-    {
-        var raw = ExtractHeader(headers, CloudEventHeaders.Id);
-        return Guid.TryParse(raw, out var id) ? id : Guid.Empty;
+            "Sending {Channel} notification {NotificationId} to {Recipient}: {Subject}",
+            command.Channel, command.NotificationId, command.Recipient, command.Subject);
     }
 
     private static string ExtractHeader(Headers headers, string key)

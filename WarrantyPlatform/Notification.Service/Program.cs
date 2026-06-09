@@ -35,7 +35,7 @@ builder.Services.AddSingleton<ISchemaRegistryClient>(sp =>
     return new CachedSchemaRegistryClient(new SchemaRegistryConfig { Url = options.SchemaRegistryUrl });
 });
 
-builder.Services.AddHostedService<WarrantyEventsConsumer>();
+builder.Services.AddHostedService<NotificationCommandsConsumer>();
 
 var app = builder.Build();
 
