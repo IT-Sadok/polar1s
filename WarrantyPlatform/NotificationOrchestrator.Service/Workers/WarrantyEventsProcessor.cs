@@ -1,50 +1,34 @@
 using System.Globalization;
 using System.Text;
 using Confluent.Kafka;
-using Confluent.SchemaRegistry;
-using Confluent.SchemaRegistry.Serdes;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
-using NJsonSchema.NewtonsoftJson.Generation;
 using NotificationOrchestrator.Service.Common.Configuration;
 using NotificationOrchestrator.Service.Common.Messaging.Const;
 using NotificationOrchestrator.Service.Contracts.Commands;
-using NotificationOrchestrator.Service.Contracts.Events;
+using NotificationOrchestrator.Service.Translators;
 
 namespace NotificationOrchestrator.Service.Workers;
 
-public class WarrantyEventsTranslator : BackgroundService
+public class WarrantyEventsProcessor : BackgroundService
 {
     private readonly IProducer<string, byte[]> _producer;
     private readonly IAsyncSerializer<SendNotificationCommand> _commandSerializer;
-    private readonly JsonDeserializer<WarrantyRegisteredEvent> _warrantyRegisteredDeserializer;
+    private readonly IReadOnlyDictionary<string, IWarrantyEventTranslator> _translatorsByType;
     private readonly KafkaOptions _kafkaOptions;
-    private readonly ILogger<WarrantyEventsTranslator> _logger;
+    private readonly ILogger<WarrantyEventsProcessor> _logger;
 
-    public WarrantyEventsTranslator(
-        ISchemaRegistryClient schemaRegistry,
+    public WarrantyEventsProcessor(
         IProducer<string, byte[]> producer,
         IAsyncSerializer<SendNotificationCommand> commandSerializer,
+        IEnumerable<IWarrantyEventTranslator> translators,
         IOptions<KafkaOptions> kafkaOptions,
-        ILogger<WarrantyEventsTranslator> logger)
+        ILogger<WarrantyEventsProcessor> logger)
     {
         _producer = producer;
         _commandSerializer = commandSerializer;
+        _translatorsByType = translators.ToDictionary(t => t.EventType);
         _kafkaOptions = kafkaOptions.Value;
         _logger = logger;
-
-        var schemaGeneratorSettings = new NewtonsoftJsonSchemaGeneratorSettings
-        {
-            SerializerSettings = new JsonSerializerSettings
-            {
-                ContractResolver = new CamelCasePropertyNamesContractResolver()
-            }
-        };
-        _warrantyRegisteredDeserializer = new JsonDeserializer<WarrantyRegisteredEvent>(
-            schemaRegistry,
-            config: null,
-            jsonSchemaGeneratorSettings: schemaGeneratorSettings);
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -109,39 +93,14 @@ public class WarrantyEventsTranslator : BackgroundService
         var eventType = ExtractHeader(result.Message.Headers, CloudEventHeaders.Type);
         var sourceMessageId = ExtractHeader(result.Message.Headers, CloudEventHeaders.Id);
 
-        var command = eventType switch
-        {
-            EventTypes.WarrantyRegistered =>
-                await TranslateWarrantyRegisteredAsync(result, sourceTopic, sourceMessageId, ct),
-            _ => null
-        };
-
-        if (command is null)
+        if (!_translatorsByType.TryGetValue(eventType, out var translator))
         {
             _logger.LogWarning("Unhandled event type '{EventType}', skipping", eventType);
             return;
         }
 
+        var command = await translator.TranslateAsync(result.Message.Value, sourceTopic, sourceMessageId);
         await PublishAsync(command, ct);
-    }
-
-    private async Task<SendNotificationCommand> TranslateWarrantyRegisteredAsync(
-        ConsumeResult<string, byte[]> result,
-        string sourceTopic,
-        string sourceMessageId,
-        CancellationToken ct)
-    {
-        var ctx = new SerializationContext(MessageComponentType.Value, sourceTopic);
-        var evt = await _warrantyRegisteredDeserializer.DeserializeAsync(result.Message.Value, isNull: false, ctx);
-
-        var notificationId = Guid.TryParse(sourceMessageId, out var id) ? id : Guid.NewGuid();
-
-        return new SendNotificationCommand(
-            NotificationId: notificationId,
-            Channel: NotificationChannels.Email,
-            Recipient: evt.CustomerId.ToString(),
-            Subject: "Warranty registered",
-            Body: $"Your warranty {evt.WarrantyId} has been registered and is valid until {evt.ExpiresAt:yyyy-MM-dd}.");
     }
 
     private async Task PublishAsync(SendNotificationCommand command, CancellationToken ct)
@@ -167,7 +126,7 @@ public class WarrantyEventsTranslator : BackgroundService
         await _producer.ProduceAsync(targetTopic, message, ct);
 
         _logger.LogInformation(
-            "Translated WarrantyRegistered {NotificationId} -> SendNotificationCommand for recipient {Recipient}",
+            "Translated {NotificationId} -> SendNotificationCommand for recipient {Recipient}",
             command.NotificationId, command.Recipient);
     }
 

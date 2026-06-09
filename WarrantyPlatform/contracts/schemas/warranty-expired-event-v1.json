@@ -1,0 +1,31 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://warrantyplatform.local/schemas/warranty-expired-event-v1.json",
+  "title": "WarrantyExpiredEvent",
+  "description": "Emitted when an active warranty passes its expiry date.",
+  "type": "object",
+  "properties": {
+    "warrantyId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique identifier of the expired warranty."
+    },
+    "customerId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Customer who owns the warranty."
+    },
+    "productId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Product the warranty covered."
+    },
+    "expiresAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the warranty coverage expired."
+    }
+  },
+  "required": ["warrantyId", "customerId", "productId", "expiresAt"],
+  "additionalProperties": false
+}

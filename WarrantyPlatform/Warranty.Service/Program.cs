@@ -1,18 +1,15 @@
 using Confluent.Kafka;
 using Confluent.SchemaRegistry;
-using Confluent.SchemaRegistry.Serdes;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
-using NJsonSchema.NewtonsoftJson.Generation;
 using Warranty.Service.Common.Configuration;
 using Warranty.Service.Common.Extensions;
 using Warranty.Service.Common.Messaging;
-using Warranty.Service.Contracts.Events;
+using Warranty.Service.Common.Messaging.Serialization;
 using Warranty.Service.Data;
 using Warranty.Service.Endpoints;
+using Warranty.Service.Jobs;
 using Warranty.Service.Services;
 using Warranty.Service.Services.Contracts;
 
@@ -64,26 +61,11 @@ builder.Services.AddSingleton(sp =>
     return new ProducerBuilder<string, byte[]>(config).Build();
 });
 
-builder.Services.AddSingleton<IAsyncSerializer<WarrantyRegisteredEvent>>(sp =>
-{
-    var schemaRegistry = sp.GetRequiredService<ISchemaRegistryClient>();
-    var config = new JsonSerializerConfig
-    {
-        SubjectNameStrategy = SubjectNameStrategy.TopicRecord,
-        AutoRegisterSchemas = false,
-        UseLatestVersion = true,
-    };
-    var schemaGeneratorSettings = new NewtonsoftJsonSchemaGeneratorSettings
-    {
-        SerializerSettings = new JsonSerializerSettings
-        {
-            ContractResolver = new CamelCasePropertyNamesContractResolver()
-        }
-    };
-    return new JsonSerializer<WarrantyRegisteredEvent>(schemaRegistry, config, schemaGeneratorSettings);
-});
+builder.Services.AddSingleton<IOutboxEventSerializer, WarrantyRegisteredOutboxSerializer>();
+builder.Services.AddSingleton<IOutboxEventSerializer, WarrantyExpiredOutboxSerializer>();
 
 builder.Services.AddHostedService<OutboxRelayJob>();
+builder.Services.AddHostedService<WarrantyExpirySweepJob>();
 
 var app = builder.Build();
 

@@ -7,6 +7,7 @@ using Newtonsoft.Json.Serialization;
 using NJsonSchema.NewtonsoftJson.Generation;
 using NotificationOrchestrator.Service.Common.Configuration;
 using NotificationOrchestrator.Service.Contracts.Commands;
+using NotificationOrchestrator.Service.Translators;
 using NotificationOrchestrator.Service.Workers;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -53,7 +54,10 @@ builder.Services.AddSingleton<IAsyncSerializer<SendNotificationCommand>>(sp =>
     return new JsonSerializer<SendNotificationCommand>(schemaRegistry, config, schemaGeneratorSettings);
 });
 
-builder.Services.AddHostedService<WarrantyEventsTranslator>();
+builder.Services.AddSingleton<IWarrantyEventTranslator, WarrantyRegisteredTranslator>();
+builder.Services.AddSingleton<IWarrantyEventTranslator, WarrantyExpiredTranslator>();
+
+builder.Services.AddHostedService<WarrantyEventsProcessor>();
 
 builder.Services.AddHealthChecks();
 

@@ -5,11 +5,11 @@ using System.Globalization;
 using System.Text;
 using System.Text.Json;
 using Warranty.Service.Common.Messaging.Const;
-using Warranty.Service.Contracts.Events;
+using Warranty.Service.Common.Messaging.Serialization;
 using Warranty.Service.Data;
 using Warranty.Service.Entities;
 
-namespace Warranty.Service.Common.Messaging;
+namespace Warranty.Service.Jobs;
 
 public class OutboxRelayJob : BackgroundService
 {
@@ -21,18 +21,18 @@ public class OutboxRelayJob : BackgroundService
 
     private readonly IServiceScopeFactory _scopeFactory;
     private readonly IProducer<string, byte[]> _producer;
-    private readonly IAsyncSerializer<WarrantyRegisteredEvent> _warrantyRegisteredSerializer;
+    private readonly IReadOnlyDictionary<string, IOutboxEventSerializer> _serializersByType;
     private readonly ILogger<OutboxRelayJob> _logger;
 
     public OutboxRelayJob(
         IServiceScopeFactory scopeFactory,
         IProducer<string, byte[]> producer,
-        IAsyncSerializer<WarrantyRegisteredEvent> warrantyRegisteredSerializer,
+        IEnumerable<IOutboxEventSerializer> serializers,
         ILogger<OutboxRelayJob> logger)
     {
         _scopeFactory = scopeFactory;
         _producer = producer;
-        _warrantyRegisteredSerializer = warrantyRegisteredSerializer;
+        _serializersByType = serializers.ToDictionary(s => s.EventType);
         _logger = logger;
     }
 
@@ -134,18 +134,11 @@ public class OutboxRelayJob : BackgroundService
             successfulIds.Count, pending.Count);
     }
 
-    private Task<byte[]> SerializeAsync(OutboxMessageEntity outbox)
+    private async Task<byte[]> SerializeAsync(OutboxMessageEntity outbox)
     {
-        var ctx = new SerializationContext(MessageComponentType.Value, outbox.Topic);
-
-        return outbox.Type switch
-        {
-            WarrantyEventTypes.Registered =>
-                _warrantyRegisteredSerializer.SerializeAsync(
-                    JsonSerializer.Deserialize<WarrantyRegisteredEvent>(outbox.Payload, JsonOptions)!,
-                    ctx),
-            _ => throw new InvalidOperationException($"Unknown event type: {outbox.Type}")
-        };
+        if (!_serializersByType.TryGetValue(outbox.Type, out var serializer))
+            throw new InvalidOperationException($"Unknown event type: {outbox.Type}");
+        return await serializer.SerializeAsync(outbox.Payload, outbox.Topic);
     }
 
     private static Message<string, byte[]> BuildKafkaMessage(OutboxMessageEntity outbox, byte[] valueBytes)

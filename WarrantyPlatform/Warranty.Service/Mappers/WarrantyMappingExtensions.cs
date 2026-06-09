@@ -41,4 +41,13 @@ public static class WarrantyMappingExtensions
             warranty.PurchaseDate,
             warranty.ExpiresAt);
     }
+
+    public static WarrantyExpiredEvent ToExpiredEvent(this WarrantyEntity warranty)
+    {
+        return new WarrantyExpiredEvent(
+            warranty.Id,
+            warranty.CustomerId,
+            warranty.ProductId,
+            warranty.ExpiresAt);
+    }
 }

@@ -9,6 +9,7 @@ public static class Topics
 public static class EventTypes
 {
     public const string WarrantyRegistered = "warranty.registered.v1";
+    public const string WarrantyExpired = "warranty.expired.v1";
 }
 
 public static class CommandTypes
