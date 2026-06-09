@@ -64,7 +64,7 @@ builder.Services.AddSingleton(sp =>
     return new ProducerBuilder<string, byte[]>(config).Build();
 });
 
-builder.Services.AddSingleton<IAsyncSerializer<WarrantyRegistered>>(sp =>
+builder.Services.AddSingleton<IAsyncSerializer<WarrantyRegisteredEvent>>(sp =>
 {
     var schemaRegistry = sp.GetRequiredService<ISchemaRegistryClient>();
     var config = new JsonSerializerConfig
@@ -80,7 +80,7 @@ builder.Services.AddSingleton<IAsyncSerializer<WarrantyRegistered>>(sp =>
             ContractResolver = new CamelCasePropertyNamesContractResolver()
         }
     };
-    return new JsonSerializer<WarrantyRegistered>(schemaRegistry, config, schemaGeneratorSettings);
+    return new JsonSerializer<WarrantyRegisteredEvent>(schemaRegistry, config, schemaGeneratorSettings);
 });
 
 builder.Services.AddHostedService<OutboxRelayJob>();

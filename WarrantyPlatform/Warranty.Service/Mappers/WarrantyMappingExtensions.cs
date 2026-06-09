@@ -32,9 +32,9 @@ public static class WarrantyMappingExtensions
         };
     }
 
-    public static WarrantyRegistered ToRegisteredEvent(this WarrantyEntity warranty)
+    public static WarrantyRegisteredEvent ToRegisteredEvent(this WarrantyEntity warranty)
     {
-        return new WarrantyRegistered(
+        return new WarrantyRegisteredEvent(
             warranty.Id,
             warranty.CustomerId,
             warranty.ProductId,

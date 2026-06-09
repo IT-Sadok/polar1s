@@ -37,7 +37,6 @@ public class WarrantyEventsConsumer : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        // Yield so host startup is not blocked by the synchronous consume loop.
         await Task.Yield();
 
         var consumerOptions = _kafkaOptions.Consumers.WarrantyEvents;
@@ -58,12 +57,12 @@ public class WarrantyEventsConsumer : BackgroundService
                 ContractResolver = new CamelCasePropertyNamesContractResolver()
             }
         };
-        var deserializer = new JsonDeserializer<WarrantyRegistered>(
+        var deserializer = new JsonDeserializer<WarrantyRegisteredEvent>(
             _schemaRegistry,
             config: null,
             jsonSchemaGeneratorSettings: schemaGeneratorSettings);
 
-        using var consumer = new ConsumerBuilder<string, WarrantyRegistered>(config)
+        using var consumer = new ConsumerBuilder<string, WarrantyRegisteredEvent>(config)
             .SetValueDeserializer(deserializer.AsSyncOverAsync())
             .SetErrorHandler((_, e) => _logger.LogError("Kafka consumer error: {Reason}", e.Reason))
             .Build();
@@ -77,7 +76,7 @@ public class WarrantyEventsConsumer : BackgroundService
         {
             while (!stoppingToken.IsCancellationRequested)
             {
-                ConsumeResult<string, WarrantyRegistered> result;
+                ConsumeResult<string, WarrantyRegisteredEvent> result;
                 try
                 {
                     result = consumer.Consume(stoppingToken);
@@ -106,7 +105,7 @@ public class WarrantyEventsConsumer : BackgroundService
         }
     }
 
-    private async Task HandleAsync(ConsumeResult<string, WarrantyRegistered> result, CancellationToken ct)
+    private async Task HandleAsync(ConsumeResult<string, WarrantyRegisteredEvent> result, CancellationToken ct)
     {
         var messageId = ExtractMessageId(result.Message.Headers);
         var eventType = ExtractHeader(result.Message.Headers, CloudEventHeaders.Type);

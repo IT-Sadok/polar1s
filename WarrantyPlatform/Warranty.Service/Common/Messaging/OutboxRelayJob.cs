@@ -21,13 +21,13 @@ public class OutboxRelayJob : BackgroundService
 
     private readonly IServiceScopeFactory _scopeFactory;
     private readonly IProducer<string, byte[]> _producer;
-    private readonly IAsyncSerializer<WarrantyRegistered> _warrantyRegisteredSerializer;
+    private readonly IAsyncSerializer<WarrantyRegisteredEvent> _warrantyRegisteredSerializer;
     private readonly ILogger<OutboxRelayJob> _logger;
 
     public OutboxRelayJob(
         IServiceScopeFactory scopeFactory,
         IProducer<string, byte[]> producer,
-        IAsyncSerializer<WarrantyRegistered> warrantyRegisteredSerializer,
+        IAsyncSerializer<WarrantyRegisteredEvent> warrantyRegisteredSerializer,
         ILogger<OutboxRelayJob> logger)
     {
         _scopeFactory = scopeFactory;
@@ -142,7 +142,7 @@ public class OutboxRelayJob : BackgroundService
         {
             WarrantyEventTypes.Registered =>
                 _warrantyRegisteredSerializer.SerializeAsync(
-                    JsonSerializer.Deserialize<WarrantyRegistered>(outbox.Payload, JsonOptions)!,
+                    JsonSerializer.Deserialize<WarrantyRegisteredEvent>(outbox.Payload, JsonOptions)!,
                     ctx),
             _ => throw new InvalidOperationException($"Unknown event type: {outbox.Type}")
         };
