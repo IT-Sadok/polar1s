@@ -1,7 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Warranty.Service.Common;
+using Warranty.Service.Common.Configuration;
+using Warranty.Service.Common.Messaging;
+using Warranty.Service.Common.Messaging.Const;
 using Warranty.Service.Common.Pagination;
 using Warranty.Service.Data;
+using Warranty.Service.Entities;
 using Warranty.Service.Mappers;
 using Warranty.Service.Models;
 using Warranty.Service.Services.Contracts;
@@ -11,12 +16,20 @@ namespace Warranty.Service.Services;
 public class WarrantyService : IWarrantyService
 {
     private readonly WarrantyDbContext _dbContext;
+    private readonly IEventPublisher _eventPublisher;
     private readonly ILogger<WarrantyService> _logger;
+    private readonly string _eventsTopic;
 
-    public WarrantyService(WarrantyDbContext dbContext, ILogger<WarrantyService> logger)
+    public WarrantyService(
+        WarrantyDbContext dbContext,
+        IEventPublisher eventPublisher,
+        IOptions<KafkaOptions> kafkaOptions,
+        ILogger<WarrantyService> logger)
     {
         _dbContext = dbContext;
+        _eventPublisher = eventPublisher;
         _logger = logger;
+        _eventsTopic = kafkaOptions.Value.Producers.WarrantyEvents.Topic ?? WarrantyTopics.Events;
     }
 
     public async Task<Result<CursorPage<WarrantyResponse>>> GetByCustomerAsync(GetWarrantiesByCustomerRequest request, CancellationToken ct)
@@ -67,7 +80,23 @@ public class WarrantyService : IWarrantyService
     {
         var warranty = request.ToEntity();
         _dbContext.Warranties.Add(warranty);
+
+        await _eventPublisher.PublishAsync(
+            warranty.ToRegisteredEvent(),
+            new EventMetadata(
+                Type: WarrantyEventTypes.Registered,
+                Topic: _eventsTopic,
+                AggregateType: nameof(WarrantyEntity),
+                AggregateId: warranty.Id,
+                PartitionKey: warranty.CustomerId.ToString()),
+            ct);
+
         await _dbContext.SaveChangesAsync(ct);
+
+        _logger.LogInformation(
+            "Warranty {WarrantyId} created for customer {CustomerId}",
+            warranty.Id,
+            warranty.CustomerId);
 
         return warranty.ToResponse();
     }

@@ -1,4 +1,5 @@
-﻿using Warranty.Service.Entities;
+﻿using Warranty.Service.Contracts.Events;
+using Warranty.Service.Entities;
 using Warranty.Service.Entities.Const;
 using Warranty.Service.Models;
 
@@ -29,5 +30,24 @@ public static class WarrantyMappingExtensions
             ExpiresAt = request.ExpiresAt,
             Status = WarrantyStatus.Active
         };
+    }
+
+    public static WarrantyRegisteredEvent ToRegisteredEvent(this WarrantyEntity warranty)
+    {
+        return new WarrantyRegisteredEvent(
+            warranty.Id,
+            warranty.CustomerId,
+            warranty.ProductId,
+            warranty.PurchaseDate,
+            warranty.ExpiresAt);
+    }
+
+    public static WarrantyExpiredEvent ToExpiredEvent(this WarrantyEntity warranty)
+    {
+        return new WarrantyExpiredEvent(
+            warranty.Id,
+            warranty.CustomerId,
+            warranty.ProductId,
+            warranty.ExpiresAt);
     }
 }

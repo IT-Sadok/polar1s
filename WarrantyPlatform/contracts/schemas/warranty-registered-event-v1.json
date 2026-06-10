@@ -1,0 +1,36 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://warrantyplatform.local/schemas/warranty-registered-event-v1.json",
+  "title": "WarrantyRegisteredEvent",
+  "description": "Emitted when a new warranty is registered for a customer's product.",
+  "type": "object",
+  "properties": {
+    "warrantyId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique identifier of the registered warranty."
+    },
+    "customerId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Customer who owns the warranty."
+    },
+    "productId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Product the warranty covers."
+    },
+    "purchaseDate": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the product was purchased."
+    },
+    "expiresAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the warranty coverage expires."
+    }
+  },
+  "required": ["warrantyId", "customerId", "productId", "purchaseDate", "expiresAt"],
+  "additionalProperties": false
+}
